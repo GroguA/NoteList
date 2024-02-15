@@ -31,12 +31,14 @@ class NoteListViewModel {
     var onAction: (NoteListAction) -> ()  = { _ in }
     
     func loadNotes() {
-        do {
-            let notes = try NoteStorageService.shared.fetchNotes()
-            currentState = .success(notes)
-        } catch {
-            currentState = .error
-        }
+        noteSource.getAllNotes(onSuccess: { notes in
+            let notes = notes.map({ note in
+                return NoteListNoteModel(text: note.text, title: note.title, id: note.id)
+            })
+            self.currentState = .success(notes)
+        }, onError: { _ in
+            self.currentState = .error
+        })
     }
     
     func onAddNoteButtonTapped() {

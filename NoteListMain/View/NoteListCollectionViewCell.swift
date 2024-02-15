@@ -37,7 +37,7 @@ class NoteListCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    func setupViews(noteSetting: FetchNoteCoreDataModel) {
+    func setupViews(note: NoteListNoteModel) {
         noteStackView.addArrangedSubview(noteTitleLabel)
         noteStackView.addArrangedSubview(noteTextLabel)
         contentView.addSubview(noteStackView)
@@ -47,8 +47,8 @@ class NoteListCollectionViewCell: UICollectionViewCell {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         
-        noteTitleLabel.text = noteSetting.title
-        noteTextLabel.text = noteSetting.text
+        noteTitleLabel.text = note.title
+        noteTextLabel.text = note.text
         
         let constraints = [
             noteStackView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),

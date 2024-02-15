@@ -8,6 +8,6 @@
 import Foundation
 
 enum NoteListState {
-    case success([FetchNoteCoreDataModel])
+    case success([NoteListNoteModel])
     case error
 }

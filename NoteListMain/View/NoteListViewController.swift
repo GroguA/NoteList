@@ -9,7 +9,7 @@ import UIKit
 
 class NoteListViewController: UIViewController {
     
-    private var notes: [FetchNoteCoreDataModel] = []
+    private var notes: [NoteListNoteModel] = []
     
     private let viewModel = NoteListViewModel()
     
@@ -125,7 +125,7 @@ extension NoteListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoteListCollectionViewCell.identifier, for: indexPath) as! NoteListCollectionViewCell
         let note = notes[indexPath.row]
-        cell.setupViews(noteSetting: note)
+        cell.setupViews(note: note)
         return cell
     }
     
