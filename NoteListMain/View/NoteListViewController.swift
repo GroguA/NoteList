@@ -9,10 +9,12 @@ import UIKit
 
 class NoteListViewController: UIViewController {
     
-    var notes: [FetchNoteCoreDateModel] = []
+    private var notes: [FetchNoteCoreDataModel] = []
     
     private let viewModel = NoteListViewModel()
     
+    private let editNoteVC = EditNoteViewController()
+        
     private let itemsPerRow: CGFloat = 1
     private let itemsPerView: CGFloat = 7
     private let sectionInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
@@ -35,24 +37,36 @@ class NoteListViewController: UIViewController {
     
     private lazy var errorLabel: UILabel = {
         let label = UILabel()
+        label.text = "Error"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     
     override func viewWillAppear(_ animated: Bool) {
-        NoteSource.shared.getAllNotes(onSuccess: { notes in
-            self.notes = notes
-        }, onError: { error in
-            errorLabel.text = "\(error.localizedDescription)"
-            errorLabel.isHidden = false
-        })
+        viewModel.loadNotes()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
+        
+        viewModel.viewStateDidChange = { viewState in
+            self.renderViewState(state: viewState)
+        }
+        
+        viewModel.onAction = { action in
+            switch action {
+            case .openNoteEdit(let noteId):
+                self.editNoteVC.noteID = noteId
+                self.navigationController?.pushViewController(EditNoteViewController(), animated: true)
+            case .showErrorDialog(let errorText):
+                let alert = UIAlertController(title: "Error", message: errorText, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default))
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     
@@ -78,8 +92,18 @@ class NoteListViewController: UIViewController {
         NSLayoutConstraint.activate(constraints)
     }
     
+    private func renderViewState(state: NoteListState) {
+        switch state {
+        case .success(let fetchedNotes):
+            self.notes = fetchedNotes
+            noteListCollectionView.reloadData()
+            errorLabel.isHidden = true
+        case .error:
+            errorLabel.isHidden = false
+        }
+    }
+    
     @objc private func addNoteButtonClicked() {
-        navigationController?.pushViewController(EditNoteViewController(), animated: true)
         viewModel.onAddNoteButtonTapped()
     }
     
@@ -88,7 +112,6 @@ class NoteListViewController: UIViewController {
 extension NoteListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let clickedNote = notes[indexPath.row]
-        let editNoteVC = EditNoteViewController()
         editNoteVC.noteID = clickedNote.id
         navigationController?.pushViewController(editNoteVC, animated: true)
     }

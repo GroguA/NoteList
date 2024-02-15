@@ -13,24 +13,40 @@ class NoteSource {
     
     private let noteStorageService = NoteStorageService.shared
     
-    func getAllNotes(onSuccess: ([FetchNoteCoreDateModel]) -> (), onError: (Error) -> ()) {
-        let coreDataNotes = noteStorageService.fetchNotes()
-        if coreDataNotes.isEmpty {
-            let notes = FetchNoteCoreDateModel(text: "Let start with your first note", title: "Hello world", id: nil)
-            onSuccess([notes])
-        } else {
-            onSuccess(coreDataNotes)
+    func getAllNotes(onSuccess: @escaping ([FetchNoteCoreDataModel]) -> (), onError: @escaping (Error) -> ()) {
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let coreDataNotes = try self.noteStorageService.fetchNotes()
+                if coreDataNotes.isEmpty {
+                    let notes = FetchNoteCoreDataModel(text: "Let start with your first note", title: "Hello world", id: "9999")
+                    self.callResulOnMain {
+                        onSuccess([notes])
+                    }
+                } else {
+                    self.callResulOnMain {
+                        onSuccess(coreDataNotes)
+                    }
+                }
+            } catch {
+                self.callResulOnMain {
+                    onError(error)
+                }
+            }
         }
     }
     
-    func createEmptyNote(note: () -> (SaveNoteCoreDataModel)) {
-        let note = note()
-        noteStorageService.saveNote(note: note)
+    func createEmptyNote(onSuccess: (String) -> (), onError: (Error) -> ()) {
+        do {
+            let noteID = try noteStorageService.saveEmptyNote()
+            onSuccess(noteID)
+        } catch {
+            onError(error)
+        }
     }
     
-    func getNoteById(id: String?) -> FetchNoteCoreDateModel? {
+    func getNoteById(id: String?) -> FetchNoteCoreDataModel? {
         if let note = noteStorageService.getNoteById(id: id) {
-            return FetchNoteCoreDateModel(text: note.text, title: note.title, id: note.id)
+            return FetchNoteCoreDataModel(text: note.text, title: note.title, id: note.id)
         } else {
             return nil
         }
@@ -40,4 +56,9 @@ class NoteSource {
         noteStorageService.updateNoteById(id: id, text: text, title: title)
     }
     
+    private func callResulOnMain(result: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            result()
+        }
+    }
 }

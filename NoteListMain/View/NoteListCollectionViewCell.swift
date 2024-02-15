@@ -37,7 +37,7 @@ class NoteListCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    func setupViews(noteSetting: FetchNoteCoreDateModel) {
+    func setupViews(noteSetting: FetchNoteCoreDataModel) {
         noteStackView.addArrangedSubview(noteTitleLabel)
         noteStackView.addArrangedSubview(noteTextLabel)
         contentView.addSubview(noteStackView)
