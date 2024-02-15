@@ -9,23 +9,39 @@
 /* Begin PBXBuildFile section */
 		7CED2A612B7CB89500EDF509 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A602B7CB89500EDF509 /* AppDelegate.swift */; };
 		7CED2A632B7CB89500EDF509 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A622B7CB89500EDF509 /* SceneDelegate.swift */; };
-		7CED2A652B7CB89500EDF509 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A642B7CB89500EDF509 /* ViewController.swift */; };
+		7CED2A652B7CB89500EDF509 /* NoteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A642B7CB89500EDF509 /* NoteListViewController.swift */; };
 		7CED2A6B2B7CB89500EDF509 /* NoteList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A692B7CB89500EDF509 /* NoteList.xcdatamodeld */; };
 		7CED2A6D2B7CB89700EDF509 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CED2A6C2B7CB89700EDF509 /* Assets.xcassets */; };
 		7CED2A702B7CB89700EDF509 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CED2A6E2B7CB89700EDF509 /* LaunchScreen.storyboard */; };
 		7CED2A782B7CB93C00EDF509 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 7CED2A772B7CB93C00EDF509 /* .gitignore */; };
+		7CED2A7B2B7D7F9200EDF509 /* NoteSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A7A2B7D7F9200EDF509 /* NoteSource.swift */; };
+		7CED2A7F2B7D84AF00EDF509 /* NoteListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A7E2B7D84AF00EDF509 /* NoteListCollectionViewCell.swift */; };
+		7CED2A832B7D93CA00EDF509 /* EditNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A822B7D93CA00EDF509 /* EditNoteViewController.swift */; };
+		7CED2A872B7D979E00EDF509 /* SaveNoteCoreDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A862B7D979E00EDF509 /* SaveNoteCoreDataModel.swift */; };
+		7CED2A892B7D97EC00EDF509 /* NoteStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A882B7D97EC00EDF509 /* NoteStorageService.swift */; };
+		7CED2A8B2B7DAE9000EDF509 /* NoteListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A8A2B7DAE9000EDF509 /* NoteListViewModel.swift */; };
+		7CED2A8F2B7DB38100EDF509 /* EditNoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A8E2B7DB38100EDF509 /* EditNoteViewModel.swift */; };
+		7CED2A912B7DB4E000EDF509 /* FetchNoteCoreDateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A902B7DB4E000EDF509 /* FetchNoteCoreDateModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7CED2A5D2B7CB89500EDF509 /* NoteList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CED2A602B7CB89500EDF509 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CED2A622B7CB89500EDF509 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		7CED2A642B7CB89500EDF509 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		7CED2A642B7CB89500EDF509 /* NoteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListViewController.swift; sourceTree = "<group>"; };
 		7CED2A6A2B7CB89500EDF509 /* NoteList.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NoteList.xcdatamodel; sourceTree = "<group>"; };
 		7CED2A6C2B7CB89700EDF509 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7CED2A6F2B7CB89700EDF509 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7CED2A712B7CB89700EDF509 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7CED2A772B7CB93C00EDF509 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		7CED2A7A2B7D7F9200EDF509 /* NoteSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSource.swift; sourceTree = "<group>"; };
+		7CED2A7E2B7D84AF00EDF509 /* NoteListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListCollectionViewCell.swift; sourceTree = "<group>"; };
+		7CED2A822B7D93CA00EDF509 /* EditNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteViewController.swift; sourceTree = "<group>"; };
+		7CED2A862B7D979E00EDF509 /* SaveNoteCoreDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveNoteCoreDataModel.swift; sourceTree = "<group>"; };
+		7CED2A882B7D97EC00EDF509 /* NoteStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteStorageService.swift; sourceTree = "<group>"; };
+		7CED2A8A2B7DAE9000EDF509 /* NoteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListViewModel.swift; sourceTree = "<group>"; };
+		7CED2A8E2B7DB38100EDF509 /* EditNoteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteViewModel.swift; sourceTree = "<group>"; };
+		7CED2A902B7DB4E000EDF509 /* FetchNoteCoreDateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchNoteCoreDateModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +59,12 @@
 			isa = PBXGroup;
 			children = (
 				7CED2A772B7CB93C00EDF509 /* .gitignore */,
+				7CED2A852B7D978700EDF509 /* NoteStorage */,
+				7CED2A842B7D974B00EDF509 /* CoreData */,
 				7CED2A5F2B7CB89500EDF509 /* NoteList */,
+				7CED2A802B7D93A400EDF509 /* EditNote */,
+				7CED2A792B7D7F7200EDF509 /* NoteSource */,
+				7CED2A7C2B7D812300EDF509 /* NoteListMain */,
 				7CED2A5E2B7CB89500EDF509 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,13 +82,88 @@
 			children = (
 				7CED2A602B7CB89500EDF509 /* AppDelegate.swift */,
 				7CED2A622B7CB89500EDF509 /* SceneDelegate.swift */,
-				7CED2A642B7CB89500EDF509 /* ViewController.swift */,
 				7CED2A6C2B7CB89700EDF509 /* Assets.xcassets */,
 				7CED2A6E2B7CB89700EDF509 /* LaunchScreen.storyboard */,
 				7CED2A712B7CB89700EDF509 /* Info.plist */,
-				7CED2A692B7CB89500EDF509 /* NoteList.xcdatamodeld */,
 			);
 			path = NoteList;
+			sourceTree = "<group>";
+		};
+		7CED2A792B7D7F7200EDF509 /* NoteSource */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A7A2B7D7F9200EDF509 /* NoteSource.swift */,
+			);
+			path = NoteSource;
+			sourceTree = "<group>";
+		};
+		7CED2A7C2B7D812300EDF509 /* NoteListMain */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A8C2B7DAE9400EDF509 /* ViewModel */,
+				7CED2A7D2B7D832500EDF509 /* View */,
+			);
+			path = NoteListMain;
+			sourceTree = "<group>";
+		};
+		7CED2A7D2B7D832500EDF509 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A642B7CB89500EDF509 /* NoteListViewController.swift */,
+				7CED2A7E2B7D84AF00EDF509 /* NoteListCollectionViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7CED2A802B7D93A400EDF509 /* EditNote */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A8D2B7DB37100EDF509 /* ViewModel */,
+				7CED2A812B7D93B100EDF509 /* View */,
+			);
+			path = EditNote;
+			sourceTree = "<group>";
+		};
+		7CED2A812B7D93B100EDF509 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A822B7D93CA00EDF509 /* EditNoteViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7CED2A842B7D974B00EDF509 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A692B7CB89500EDF509 /* NoteList.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		7CED2A852B7D978700EDF509 /* NoteStorage */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A862B7D979E00EDF509 /* SaveNoteCoreDataModel.swift */,
+				7CED2A882B7D97EC00EDF509 /* NoteStorageService.swift */,
+				7CED2A902B7DB4E000EDF509 /* FetchNoteCoreDateModel.swift */,
+			);
+			path = NoteStorage;
+			sourceTree = "<group>";
+		};
+		7CED2A8C2B7DAE9400EDF509 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A8A2B7DAE9000EDF509 /* NoteListViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		7CED2A8D2B7DB37100EDF509 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				7CED2A8E2B7DB38100EDF509 /* EditNoteViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,10 +237,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CED2A652B7CB89500EDF509 /* ViewController.swift in Sources */,
+				7CED2A7F2B7D84AF00EDF509 /* NoteListCollectionViewCell.swift in Sources */,
+				7CED2A652B7CB89500EDF509 /* NoteListViewController.swift in Sources */,
 				7CED2A612B7CB89500EDF509 /* AppDelegate.swift in Sources */,
+				7CED2A832B7D93CA00EDF509 /* EditNoteViewController.swift in Sources */,
+				7CED2A8F2B7DB38100EDF509 /* EditNoteViewModel.swift in Sources */,
+				7CED2A872B7D979E00EDF509 /* SaveNoteCoreDataModel.swift in Sources */,
 				7CED2A632B7CB89500EDF509 /* SceneDelegate.swift in Sources */,
+				7CED2A892B7D97EC00EDF509 /* NoteStorageService.swift in Sources */,
 				7CED2A6B2B7CB89500EDF509 /* NoteList.xcdatamodeld in Sources */,
+				7CED2A8B2B7DAE9000EDF509 /* NoteListViewModel.swift in Sources */,
+				7CED2A7B2B7D7F9200EDF509 /* NoteSource.swift in Sources */,
+				7CED2A912B7DB4E000EDF509 /* FetchNoteCoreDateModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
