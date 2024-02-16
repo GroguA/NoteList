@@ -11,6 +11,8 @@ class EditNoteViewController: UIViewController {
     
     var noteID: String? = nil
     
+    private let viewModel = EditNoteViewModel()
+    
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Fill title"
@@ -39,6 +41,10 @@ class EditNoteViewController: UIViewController {
         super.viewDidLoad()
         
         setupViews()
+        
+        viewModel.viewStateDidChange = { state in
+            self.renderViewState(state: state)
+        }
     }
     
     private func setupViews() {
@@ -67,17 +73,32 @@ class EditNoteViewController: UIViewController {
         
     }
     
+    private func renderViewState(state: EditNoteState) {
+        switch state {
+        case .success(let text, let title):
+            noteTextTextField.text = text
+            noteTitleTextField.text = title
+        }
+    }
+    
     
 }
 
 extension EditNoteViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let noteID {
-            if textField == noteTitleTextField {
-                NoteSource.shared.updateNoteById(id: noteID, title: textField.text, text: nil)
-            } else {
-                NoteSource.shared.updateNoteById(id: noteID, title: nil, text: textField.text)
+            viewModel.noteId = noteID
+        }
+            if !string.isEmpty {
+                if let currentString = textField.text as? NSString {
+                    let newString = currentString.replacingCharacters(in: range, with: string)
+                if textField == noteTitleTextField {
+                    viewModel.textChanged(title: newString, text: nil)
+                } else {
+                    viewModel.textChanged(title: nil, text: newString)
+                }
             }
         }
+        return true
     }
 }

@@ -19,16 +19,16 @@ class NoteSource {
                 let coreDataNotes = try self.noteStorageService.fetchNotes()
                 if coreDataNotes.isEmpty {
                     let notes = FetchNoteCoreDataModel(text: "Let start with your first note", title: "Hello world", id: "9999")
-                    self.callResulOnMain {
+                    self.callResultOnMain {
                         onSuccess([notes])
                     }
                 } else {
-                    self.callResulOnMain {
+                    self.callResultOnMain {
                         onSuccess(coreDataNotes)
                     }
                 }
             } catch {
-                self.callResulOnMain {
+                self.callResultOnMain {
                     onError(error)
                 }
             }
@@ -56,7 +56,7 @@ class NoteSource {
         noteStorageService.updateNoteById(id: id, text: text, title: title)
     }
     
-    private func callResulOnMain(result: @escaping () -> Void) {
+    private func callResultOnMain(result: @escaping () -> Void) {
         DispatchQueue.main.async {
             result()
         }

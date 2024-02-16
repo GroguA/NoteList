@@ -129,7 +129,6 @@ class NoteStorageService {
         
         let note = SaveNoteCoreDataModel(text: nil, title: nil)
         
-        
         noteNSManagedObj.setValue(note.text, forKey: "text")
         noteNSManagedObj.setValue(note.title, forKey: "title")
         

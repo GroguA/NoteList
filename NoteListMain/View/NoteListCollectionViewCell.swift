@@ -27,38 +27,43 @@ class NoteListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var noteStackView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .vertical
-        view.alignment = .leading
-        view.spacing = 4
-        view.distribution = .fillProportionally
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+    }
     
-    func setupViews(note: NoteListNoteModel) {
-        noteStackView.addArrangedSubview(noteTitleLabel)
-        noteStackView.addArrangedSubview(noteTextLabel)
-        contentView.addSubview(noteStackView)
+    func setupViews() {
+        contentView.addSubview(noteTextLabel)
+        contentView.addSubview(noteTitleLabel)
         
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.gray.withAlphaComponent(0.2).cgColor
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         
-        noteTitleLabel.text = note.title
-        noteTextLabel.text = note.text
-        
         let constraints = [
-            noteStackView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
-            noteStackView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            noteStackView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-            noteStackView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            noteTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            noteTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            noteTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            
+            noteTextLabel.topAnchor.constraint(equalTo: noteTitleLabel.bottomAnchor, constant: 8),
+            noteTextLabel.leadingAnchor.constraint(equalTo: noteTitleLabel.leadingAnchor),
+            noteTextLabel.trailingAnchor.constraint(equalTo: noteTitleLabel.trailingAnchor),
+            noteTextLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8)
         ]
         
         NSLayoutConstraint.activate(constraints)
         
     }
+    
+    func fillCell(note: NoteListNoteModel) {
+        noteTitleLabel.text = note.title
+        noteTextLabel.text = note.text
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
 }
 

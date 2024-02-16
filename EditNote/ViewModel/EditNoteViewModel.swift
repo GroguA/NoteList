@@ -9,5 +9,35 @@ import Foundation
 
 class EditNoteViewModel {
     
+    var noteId = ""
+    
+    var viewStateDidChange: (EditNoteState) -> () = { _ in } {
+        didSet {
+            guard let currentState = currentState else {
+                return
+            }
+            viewStateDidChange(currentState)
+        }
+    }
+    
+    private let noteSource = NoteSource.shared
+    
+    private var currentState: EditNoteState? = nil  {
+        didSet {
+            if let currentState = currentState {
+                viewStateDidChange(currentState)
+            }
+        }
+    }
+    
+    func loadNote(id: String) {
+        let note = noteSource.getNoteById(id: id)
+        currentState = .success(text: note?.text, title: note?.title)
+    }
+    
+    func textChanged(title: String?, text: String?) {
+        noteSource.updateNoteById(id: noteId, title: title, text: text)
+    }
+    
     
 }

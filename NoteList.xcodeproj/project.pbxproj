@@ -26,6 +26,7 @@
 		7CED2A962B7DEA9100EDF509 /* NoteListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A952B7DEA9100EDF509 /* NoteListState.swift */; };
 		7CED2A982B7DED7E00EDF509 /* NoteListAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A972B7DED7E00EDF509 /* NoteListAction.swift */; };
 		7CED2A9B2B7E004B00EDF509 /* NoteListNoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A9A2B7E004B00EDF509 /* NoteListNoteModel.swift */; };
+		7CED2A9D2B7ED8F500EDF509 /* EditNoteState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A9C2B7ED8F500EDF509 /* EditNoteState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		7CED2A952B7DEA9100EDF509 /* NoteListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListState.swift; sourceTree = "<group>"; };
 		7CED2A972B7DED7E00EDF509 /* NoteListAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListAction.swift; sourceTree = "<group>"; };
 		7CED2A9A2B7E004B00EDF509 /* NoteListNoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListNoteModel.swift; sourceTree = "<group>"; };
+		7CED2A9C2B7ED8F500EDF509 /* EditNoteState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				7CED2A8E2B7DB38100EDF509 /* EditNoteViewModel.swift */,
+				7CED2A9C2B7ED8F500EDF509 /* EditNoteState.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				7CED2A9B2B7E004B00EDF509 /* NoteListNoteModel.swift in Sources */,
 				7CED2A8B2B7DAE9000EDF509 /* NoteListViewModel.swift in Sources */,
 				7CED2A7B2B7D7F9200EDF509 /* NoteSource.swift in Sources */,
+				7CED2A9D2B7ED8F500EDF509 /* EditNoteState.swift in Sources */,
 				7CED2A982B7DED7E00EDF509 /* NoteListAction.swift in Sources */,
 				7CED2A912B7DB4E000EDF509 /* FetchNoteCoreDataModel.swift in Sources */,
 			);

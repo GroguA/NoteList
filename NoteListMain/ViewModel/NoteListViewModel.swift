@@ -8,9 +8,7 @@
 import Foundation
 
 class NoteListViewModel {
-    
-    private let noteSource = NoteSource.shared
-    
+        
     var viewStateDidChange: (NoteListState) -> () = { _ in } {
         didSet {
             guard let currentState = currentState else {
@@ -20,6 +18,8 @@ class NoteListViewModel {
         }
     }
     
+    var onAction: (NoteListAction) -> ()  = { _ in }
+    
     private var currentState: NoteListState? = nil  {
         didSet {
             if let currentState = currentState {
@@ -27,8 +27,9 @@ class NoteListViewModel {
             }
         }
     }
-    
-    var onAction: (NoteListAction) -> ()  = { _ in }
+        
+    private let noteSource = NoteSource.shared
+
     
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
@@ -42,10 +43,19 @@ class NoteListViewModel {
     }
     
     func onAddNoteButtonTapped() {
-        noteSource.createEmptyNote { id in
+        noteSource.createEmptyNote (onSuccess: { id in
             onAction(NoteListAction.openNoteEdit(noteId: id))
-        } onError: { error in
-            onAction(NoteListAction.showErrorDialog(errorText: error.localizedDescription ))
+        }, onError: ({ error in
+            onAction(NoteListAction.showErrorDialog(errorText: "Error creating new note" ))
+        }))
+    }
+        
+    
+    func onNoteClicked(id: String) {
+        if id != "9999" {
+            onAction(NoteListAction.openNoteEdit(noteId: id))
+        } else {
+            return
         }
     }
 }

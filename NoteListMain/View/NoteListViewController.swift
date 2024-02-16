@@ -13,8 +13,6 @@ class NoteListViewController: UIViewController {
     
     private let viewModel = NoteListViewModel()
     
-    private let editNoteVC = EditNoteViewController()
-        
     private let itemsPerRow: CGFloat = 1
     private let itemsPerView: CGFloat = 7
     private let sectionInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
@@ -41,9 +39,9 @@ class NoteListViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    
+        
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         viewModel.loadNotes()
     }
     
@@ -57,18 +55,23 @@ class NoteListViewController: UIViewController {
         }
         
         viewModel.onAction = { action in
-            switch action {
-            case .openNoteEdit(let noteId):
-                self.editNoteVC.noteID = noteId
-                self.navigationController?.pushViewController(EditNoteViewController(), animated: true)
-            case .showErrorDialog(let errorText):
-                let alert = UIAlertController(title: "Error", message: errorText, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default))
-                self.present(alert, animated: true)
-            }
+            self.processAction(action: action)
         }
     }
     
+    private func processAction(action: NoteListAction) {
+        switch action {
+        case .openNoteEdit(let noteId):
+            let editNoteVC = EditNoteViewController()
+            editNoteVC.noteID = noteId
+            self.navigationController?.pushViewController(editNoteVC, animated: true)
+        case .showErrorDialog(let errorText):
+            let alert = UIAlertController(title: "Error", message: errorText, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default))
+            self.present(alert, animated: true)
+        }
+    }
+
     
     private func setupViews() {
         view.backgroundColor = .white
@@ -111,9 +114,8 @@ class NoteListViewController: UIViewController {
 
 extension NoteListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let clickedNote = notes[indexPath.row]
-        editNoteVC.noteID = clickedNote.id
-        navigationController?.pushViewController(editNoteVC, animated: true)
+        let clickedNoteId = notes[indexPath.row].id
+        viewModel.onNoteClicked(id: clickedNoteId)
     }
 }
 
@@ -125,7 +127,7 @@ extension NoteListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoteListCollectionViewCell.identifier, for: indexPath) as! NoteListCollectionViewCell
         let note = notes[indexPath.row]
-        cell.setupViews(note: note)
+        cell.fillCell(note: note)
         return cell
     }
     
