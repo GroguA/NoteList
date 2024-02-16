@@ -64,9 +64,9 @@ class NoteStorageService {
         return notes
     }
     
-    func getNoteById(id: String?) -> FetchNoteCoreDataModel? {
+    func getNoteById(id: String?) throws -> FetchNoteCoreDataModel? {
         guard let appDelegate = appDelegate else {
-            return nil
+            throw NoteListErrors.runtimeError("no app delegate")
         }
         var note: FetchNoteCoreDataModel? = nil
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -74,7 +74,9 @@ class NoteStorageService {
         guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { return nil
         }
         let noteID = storageCoordinator.managedObjectID(forURIRepresentation: url)
-        guard let noteID else { return nil }
+        guard let noteID else { 
+            throw NoteListErrors.runtimeError("no such note")
+        }
         
         let noteManagedObj = managedContext.object(with: noteID)
         

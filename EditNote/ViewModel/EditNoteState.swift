@@ -9,4 +9,5 @@ import Foundation
 
 enum EditNoteState {
     case success(text: String?, title: String?)
+    case error
 }

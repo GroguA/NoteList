@@ -35,25 +35,39 @@ class NoteSource {
         }
     }
     
-    func createEmptyNote(onSuccess: (String) -> (), onError: (Error) -> ()) {
-        do {
-            let noteID = try noteStorageService.saveEmptyNote()
-            onSuccess(noteID)
-        } catch {
-            onError(error)
+    func createEmptyNote(onSuccess: @escaping (String) -> (), onError: @escaping (Error) -> ()) {
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let noteID = try self.noteStorageService.saveEmptyNote()
+                self.callResultOnMain {
+                    onSuccess(noteID)
+                }
+            } catch {
+                self.callResultOnMain {
+                    onError(error)
+                }
+            }
         }
     }
     
-    func getNoteById(id: String?) -> FetchNoteCoreDataModel? {
-        if let note = noteStorageService.getNoteById(id: id) {
-            return FetchNoteCoreDataModel(text: note.text, title: note.title, id: note.id)
-        } else {
-            return nil
+    func getNoteById(id: String?, onSuccess: @escaping (FetchNoteCoreDataModel) -> (), onError: @escaping (Error) -> ()) {
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                if let note = try self.noteStorageService.getNoteById(id: id) {
+                    self.callResultOnMain {
+                        onSuccess(note)
+                    }
+                }
+            } catch {
+                onError(error)
+            }
         }
     }
     
     func updateNoteById(id: String, title: String?, text: String?) {
-        noteStorageService.updateNoteById(id: id, text: text, title: title)
+        DispatchQueue.global(qos: .utility).async {
+            self.noteStorageService.updateNoteById(id: id, text: text, title: title)
+        }
     }
     
     private func callResultOnMain(result: @escaping () -> Void) {

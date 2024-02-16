@@ -34,6 +34,13 @@ class NoteListViewModel {
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
             let notes = notes.map({ note in
+                if note.text.isEmpty && note.title.isEmpty {
+                    return NoteListNoteModel(text: "Empty note", title: "No title", id: note.id)
+                } else if note.title.isEmpty {
+                    return NoteListNoteModel(text: note.text, title: "No title", id: note.id)
+                } else if note.text.isEmpty {
+                    return NoteListNoteModel(text: "Empty note", title: note.title, id: note.id)
+                }
                 return NoteListNoteModel(text: note.text, title: note.title, id: note.id)
             })
             self.currentState = .success(notes)
@@ -44,9 +51,9 @@ class NoteListViewModel {
     
     func onAddNoteButtonTapped() {
         noteSource.createEmptyNote (onSuccess: { id in
-            onAction(NoteListAction.openNoteEdit(noteId: id))
+            self.onAction(NoteListAction.openNoteEdit(noteId: id))
         }, onError: ({ error in
-            onAction(NoteListAction.showErrorDialog(errorText: "Error creating new note" ))
+            self.onAction(NoteListAction.showErrorDialog(errorText: "Error creating new note" ))
         }))
     }
         

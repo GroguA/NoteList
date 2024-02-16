@@ -35,8 +35,10 @@ class NoteListViewController: UIViewController {
     
     private lazy var errorLabel: UILabel = {
         let label = UILabel()
-        label.text = "Error"
+        label.text = "Error loading notes"
+        label.font = .systemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
         return label
     }()
         
@@ -79,9 +81,7 @@ class NoteListViewController: UIViewController {
         view.addSubview(errorLabel)
         navigationItem.title = "My notes"
         navigationItem.rightBarButtonItem = addNoteButton
-        
-        errorLabel.isHidden = true
-        
+                
         let constraints = [
             noteListCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             noteListCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -89,6 +89,7 @@ class NoteListViewController: UIViewController {
             noteListCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
             
         ]
         
@@ -100,8 +101,8 @@ class NoteListViewController: UIViewController {
         case .success(let fetchedNotes):
             self.notes = fetchedNotes
             noteListCollectionView.reloadData()
-            errorLabel.isHidden = true
         case .error:
+            noteListCollectionView.isHidden = true
             errorLabel.isHidden = false
         }
     }

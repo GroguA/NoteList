@@ -21,6 +21,7 @@ class EditNoteViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         textField.autocapitalizationType = .sentences
         textField.autocorrectionType = .default
+        textField.textAlignment = .justified
         textField.delegate = self
         return textField
     }()
@@ -33,8 +34,18 @@ class EditNoteViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         textField.autocapitalizationType = .sentences
         textField.autocorrectionType = .default
+        textField.textAlignment = .justified
         textField.delegate = self
         return textField
+    }()
+    
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Error loading note"
+        label.font = .systemFont(ofSize: 18)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
     }()
     
     override func viewDidLoad() {
@@ -51,14 +62,12 @@ class EditNoteViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(noteTitleTextField)
         view.addSubview(noteTextTextField)
+        view.addSubview(errorLabel)
         
-        let noteFields = NoteSource.shared.getNoteById(id: noteID)
+        guard let noteID else { return }
+        viewModel.loadNote(id: noteID)
         
-        if noteFields != nil {
-            noteTextTextField.text = noteFields?.text
-            noteTitleTextField.text = noteFields?.title
-        }
-        
+                
         let constraints = [
             noteTitleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             noteTitleTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -66,7 +75,11 @@ class EditNoteViewController: UIViewController {
             
             noteTextTextField.topAnchor.constraint(equalTo: noteTitleTextField.bottomAnchor, constant: 16),
             noteTextTextField.leadingAnchor.constraint(equalTo: noteTitleTextField.leadingAnchor),
-            noteTextTextField.trailingAnchor.constraint(equalTo: noteTitleTextField.trailingAnchor)
+            noteTextTextField.trailingAnchor.constraint(equalTo: noteTitleTextField.trailingAnchor),
+            
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -78,6 +91,9 @@ class EditNoteViewController: UIViewController {
         case .success(let text, let title):
             noteTextTextField.text = text
             noteTitleTextField.text = title
+        case .error:
+            errorLabel.isHidden = true
+            
         }
     }
     
@@ -86,17 +102,12 @@ class EditNoteViewController: UIViewController {
 
 extension EditNoteViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let noteID {
-            viewModel.noteId = noteID
-        }
-            if !string.isEmpty {
-                if let currentString = textField.text as? NSString {
-                    let newString = currentString.replacingCharacters(in: range, with: string)
-                if textField == noteTitleTextField {
-                    viewModel.textChanged(title: newString, text: nil)
-                } else {
-                    viewModel.textChanged(title: nil, text: newString)
-                }
+        if let currentString = textField.text as? NSString {
+            let newString = currentString.replacingCharacters(in: range, with: string)
+            if textField == noteTitleTextField {
+                viewModel.textChanged(title: newString, text: nil)
+            } else {
+                viewModel.textChanged(title: nil, text: newString)
             }
         }
         return true
