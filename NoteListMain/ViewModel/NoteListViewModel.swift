@@ -61,4 +61,8 @@ class NoteListViewModel {
             return
         }
     }
+    
+    func deleteNote(id: String) {
+        noteSource.deleteNote(id: id)
+    }
 }

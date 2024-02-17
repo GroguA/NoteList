@@ -56,6 +56,16 @@ class EditNoteViewController: UIViewController {
         bar.sizeToFit()
         return bar
     }()
+    
+    private lazy var placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Fill note"
+        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.textColor = .lightGray.withAlphaComponent(0.7)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = !noteTextTextView.text.isEmpty
+        return label
+    }()
 
     
     override func viewDidLoad() {
@@ -75,6 +85,7 @@ class EditNoteViewController: UIViewController {
         view.addSubview(noteTitleTextField)
         view.addSubview(noteTextTextView)
         view.addSubview(errorLabel)
+        view.addSubview(placeholderLabel)
         noteTextTextView.inputAccessoryView = toolBar
         
         guard let noteID else { return }
@@ -94,6 +105,9 @@ class EditNoteViewController: UIViewController {
             noteTextTextView.trailingAnchor.constraint(equalTo: noteTitleTextField.trailingAnchor),
             noteTextTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
+            placeholderLabel.topAnchor.constraint(equalTo: noteTextTextView.topAnchor, constant: 8),
+            placeholderLabel.leadingAnchor.constraint(equalTo: noteTextTextView.leadingAnchor, constant: 8),
+            
             errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
             
@@ -104,7 +118,7 @@ class EditNoteViewController: UIViewController {
     }
     
     private func setupToolBar() {
-        var positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
+        let positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
         positiveSeparator.width = view.bounds.width/4
         let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(makeTextBold))
         let cursiveText = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(makeTextCursive))
@@ -137,6 +151,7 @@ class EditNoteViewController: UIViewController {
             noteTextTextView.text = text
             noteTitleTextField.text = title
             errorLabel.isHidden = true
+            placeholderLabel.isHidden = !noteTextTextView.text.isEmpty
         case .error:
             noteTextTextView.isHidden = true
             noteTitleTextField.isHidden = true
@@ -162,7 +177,7 @@ class EditNoteViewController: UIViewController {
     }
     
     @objc private func makeTextUnderline() {
-
+        
     }
 }
 
@@ -183,6 +198,16 @@ extension EditNoteViewController: UITextViewDelegate {
             viewModel.textChanged(title: nil, text: newString)
         }
         return true
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        placeholderLabel.isHidden = true
     }
 
 }

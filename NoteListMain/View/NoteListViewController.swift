@@ -17,9 +17,24 @@ class NoteListViewController: UIViewController {
     private let itemsPerView: CGFloat = 7
     private let sectionInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
     
+    private lazy var configuration: UICollectionLayoutListConfiguration = {
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        config.trailingSwipeActionsConfigurationProvider = { indexPath in
+            let del = UIContextualAction(style: .destructive, title: "Delete") {
+                [weak self] action, view, completion in
+                guard let id = self?.notes[indexPath.item].id else { return }
+                self?.viewModel.deleteNote(id: id)
+                completion(true)
+            }
+            return UISwipeActionsConfiguration(actions: [del])
+        }
+        return config
+    }()
+    
     private lazy var noteListCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let listLayout = UICollectionViewCompositionalLayout.list(using: configuration)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false

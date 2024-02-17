@@ -50,7 +50,7 @@ class NoteStorageService {
         guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { throw NoteListErrors.runtimeError("failed to convert id to url")
         }
         let noteID = storageCoordinator.managedObjectID(forURIRepresentation: url)
-        guard let noteID else { 
+        guard let noteID else {
             throw NoteListErrors.runtimeError("no such note")
         }
         
@@ -119,5 +119,28 @@ class NoteStorageService {
         }
         return noteNSManagedObj.objectID.uriRepresentation().absoluteString
     }
-
+    
+    func deleteNote(id: String) throws  {
+        guard let appDelegate = appDelegate else {
+            throw NoteListErrors.runtimeError("no app delegate")
+        }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else {       throw NoteListErrors.runtimeError("no entity")
+            
+        }
+        let noteId = storageCoordinator.managedObjectID(forURIRepresentation: url)
+        guard let noteId else {
+            throw NoteListErrors.runtimeError("no such note")
+        }
+        let noteManagedObj = managedContext.object(with: noteId)
+        
+        managedContext.delete(noteManagedObj)
+        
+        do {
+            try managedContext.save()
+        } catch {
+            throw NoteListErrors.runtimeError("could not delete this note")
+        }
+    }
+    
 }

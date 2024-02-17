@@ -70,7 +70,17 @@ class NoteSource {
             do {
                 try self.noteStorageService.updateNoteById(id: id, text: text, title: title)
             } catch {
-                
+                //ignore
+            }
+        }
+    }
+    
+    func deleteNote(id: String) {
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                try self.noteStorageService.deleteNote(id: id)
+            } catch {
+                //ignore
             }
         }
     }
