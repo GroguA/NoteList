@@ -41,7 +41,7 @@ class NoteListViewController: UIViewController {
         label.isHidden = true
         return label
     }()
-        
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.loadNotes()
@@ -73,7 +73,7 @@ class NoteListViewController: UIViewController {
             self.present(alert, animated: true)
         }
     }
-
+    
     
     private func setupViews() {
         view.backgroundColor = .white
@@ -81,7 +81,7 @@ class NoteListViewController: UIViewController {
         view.addSubview(errorLabel)
         navigationItem.title = "My notes"
         navigationItem.rightBarButtonItem = addNoteButton
-                
+        
         let constraints = [
             noteListCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             noteListCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -101,6 +101,7 @@ class NoteListViewController: UIViewController {
         case .success(let fetchedNotes):
             self.notes = fetchedNotes
             noteListCollectionView.reloadData()
+            errorLabel.isHidden = true
         case .error:
             noteListCollectionView.isHidden = true
             errorLabel.isHidden = false

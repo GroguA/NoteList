@@ -22,21 +22,24 @@ class EditNoteViewController: UIViewController {
         textField.autocapitalizationType = .sentences
         textField.autocorrectionType = .default
         textField.textAlignment = .justified
+        textField.font = .systemFont(ofSize: 17, weight: .medium)
         textField.delegate = self
         return textField
     }()
-    
-    private lazy var noteTextTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Fill note text"
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.clearButtonMode = .whileEditing
-        textField.autocapitalizationType = .sentences
-        textField.autocorrectionType = .default
-        textField.textAlignment = .justified
-        textField.delegate = self
-        return textField
+        
+    private lazy var noteTextTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.1).cgColor
+        textView.layer.borderWidth = 2
+        textView.layer.cornerRadius = 8
+        textView.layer.masksToBounds = true
+        textView.font = .systemFont(ofSize: 16, weight: .regular)
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.autocapitalizationType = .sentences
+        textView.autocorrectionType = .default
+        textView.textAlignment = .justified
+        textView.delegate = self
+        return textView
     }()
     
     private lazy var errorLabel: UILabel = {
@@ -48,37 +51,51 @@ class EditNoteViewController: UIViewController {
         return label
     }()
     
+    private let toolBar: UIToolbar = {
+        let bar = UIToolbar()
+        bar.sizeToFit()
+        return bar
+    }()
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
+        setupToolBar()
         
         viewModel.viewStateDidChange = { state in
             self.renderViewState(state: state)
         }
+
     }
     
     private func setupViews() {
         view.backgroundColor = .white
         view.addSubview(noteTitleTextField)
-        view.addSubview(noteTextTextField)
+        view.addSubview(noteTextTextView)
         view.addSubview(errorLabel)
+        noteTextTextView.inputAccessoryView = toolBar
         
         guard let noteID else { return }
         viewModel.loadNote(id: noteID)
+
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
-                
         let constraints = [
             noteTitleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             noteTitleTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             noteTitleTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            noteTextTextField.topAnchor.constraint(equalTo: noteTitleTextField.bottomAnchor, constant: 16),
-            noteTextTextField.leadingAnchor.constraint(equalTo: noteTitleTextField.leadingAnchor),
-            noteTextTextField.trailingAnchor.constraint(equalTo: noteTitleTextField.trailingAnchor),
+            noteTextTextView.topAnchor.constraint(equalTo: noteTitleTextField.bottomAnchor, constant: 16),
+            noteTextTextView.leadingAnchor.constraint(equalTo: noteTitleTextField.leadingAnchor),
+            noteTextTextView.trailingAnchor.constraint(equalTo: noteTitleTextField.trailingAnchor),
+            noteTextTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
             
         ]
         
@@ -86,30 +103,86 @@ class EditNoteViewController: UIViewController {
         
     }
     
+    private func setupToolBar() {
+        var positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
+        positiveSeparator.width = view.bounds.width/4
+        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(makeTextBold))
+        let cursiveText = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(makeTextCursive))
+        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(makeTextUnderline))
+        toolBar.items = [boldText, positiveSeparator, cursiveText, positiveSeparator, underlineText]
+        
+    }
+    
+    @objc private func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            noteTextTextView.contentInset = .zero
+        } else {
+            noteTextTextView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+
+        noteTextTextView.scrollIndicatorInsets = noteTextTextView.contentInset
+
+        let selectedRange = noteTextTextView.selectedRange
+        noteTextTextView.scrollRangeToVisible(selectedRange)
+    }
+    
     private func renderViewState(state: EditNoteState) {
         switch state {
         case .success(let text, let title):
-            noteTextTextField.text = text
+            noteTextTextView.text = text
             noteTitleTextField.text = title
-        case .error:
             errorLabel.isHidden = true
+        case .error:
+            noteTextTextView.isHidden = true
+            noteTitleTextField.isHidden = true
+            errorLabel.isHidden = false
             
         }
     }
     
+    @objc private func makeTextBold() {
+        if noteTextTextView.font != .systemFont(ofSize: 16, weight: .bold) {
+            noteTextTextView.font = .systemFont(ofSize: 16, weight: .bold)
+        } else {
+            noteTextTextView.font = .systemFont(ofSize: 16, weight: .regular)
+        }
+    }
     
+    @objc private func makeTextCursive() {
+        if noteTextTextView.font != .italicSystemFont(ofSize: 16) {
+            noteTextTextView.font = .italicSystemFont(ofSize: 16)
+        } else {
+            noteTextTextView.font = .systemFont(ofSize: 16, weight: .regular)
+        }
+    }
+    
+    @objc private func makeTextUnderline() {
+
+    }
 }
 
 extension EditNoteViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let currentString = textField.text as? NSString {
             let newString = currentString.replacingCharacters(in: range, with: string)
-            if textField == noteTitleTextField {
-                viewModel.textChanged(title: newString, text: nil)
-            } else {
-                viewModel.textChanged(title: nil, text: newString)
-            }
+            viewModel.textChanged(title: newString, text: nil)
         }
         return true
     }
+}
+
+extension EditNoteViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if let currentString = textView.text as? NSString {
+            let newString = currentString.replacingCharacters(in: range, with: text)
+            viewModel.textChanged(title: nil, text: newString)
+        }
+        return true
+    }
+
 }

@@ -8,9 +8,7 @@
 import Foundation
 
 class EditNoteViewModel {
-    
-    var noteId = ""
-    
+        
     var viewStateDidChange: (EditNoteState) -> () = { _ in } {
         didSet {
             guard let currentState = currentState else {
@@ -19,6 +17,8 @@ class EditNoteViewModel {
             viewStateDidChange(currentState)
         }
     }
+    
+    private var noteId = ""
     
     private let noteSource = NoteSource.shared
     

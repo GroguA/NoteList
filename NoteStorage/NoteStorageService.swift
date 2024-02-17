@@ -16,29 +16,6 @@ class NoteStorageService {
     
     private let appDelegate = UIApplication.shared.delegate as? AppDelegate
     
-    func saveNote(note: SaveNoteCoreDataModel) {
-        guard let appDelegate = appDelegate else {
-            return
-        }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        guard let entity = NSEntityDescription.entity(forEntityName: "Note", in: managedContext) else {
-            return        }
-        
-        let noteNSManagedObj = NSManagedObject(entity: entity, insertInto: managedContext)
-        
-        noteNSManagedObj.setValue(note.text, forKey: "text")
-        noteNSManagedObj.setValue(note.title, forKey: "title")
-        
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
-    }
-    
-    
     func fetchNotes() throws -> [FetchNoteCoreDataModel] {
         
         var notes = [FetchNoteCoreDataModel]()
@@ -64,14 +41,13 @@ class NoteStorageService {
         return notes
     }
     
-    func getNoteById(id: String?) throws -> FetchNoteCoreDataModel? {
+    func getNoteById(id: String) throws -> FetchNoteCoreDataModel {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }
-        var note: FetchNoteCoreDataModel? = nil
+        var note: FetchNoteCoreDataModel
         let managedContext = appDelegate.persistentContainer.viewContext
-        guard let id else { return nil }
-        guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { return nil
+        guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { throw NoteListErrors.runtimeError("failed to convert id to url")
         }
         let noteID = storageCoordinator.managedObjectID(forURIRepresentation: url)
         guard let noteID else { 
@@ -83,21 +59,23 @@ class NoteStorageService {
         guard let text = noteManagedObj.value(forKey: "text") as? String,
               let title = noteManagedObj.value(forKey: "title") as? String
         else {
-            return nil
+            throw NoteListErrors.runtimeError("faild to fetch note text and title")
         }
         note = FetchNoteCoreDataModel(text: text, title: title, id: noteManagedObj.objectID.uriRepresentation().absoluteString)
         return note
     }
     
-    func updateNoteById(id: String, text: String?, title: String?) {
+    func updateNoteById(id: String, text: String?, title: String?) throws {
         guard let appDelegate = appDelegate else {
-            return
+            throw NoteListErrors.runtimeError("no app delegate")
         }
         let managedContext = appDelegate.persistentContainer.viewContext
-        guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { return
+        guard let url = URL(string: id), let storageCoordinator = managedContext.persistentStoreCoordinator else { throw NoteListErrors.runtimeError("failed to convert id to url")
         }
         let noteID = storageCoordinator.managedObjectID(forURIRepresentation: url)
-        guard let noteID else { return }
+        guard let noteID else {
+            throw NoteListErrors.runtimeError("no such note")
+        }
         
         let noteManagedObj = managedContext.object(with: noteID)
         
@@ -110,13 +88,13 @@ class NoteStorageService {
         
         do {
             try managedContext.save()
-        } catch let error as NSError {
-            print("Could not update. \(error), \(error.userInfo)")
+        } catch {
+            throw NoteListErrors.runtimeError("could not update note")
         }
         
     }
     
-    func saveEmptyNote() throws -> String {
+    func createEmptyNote() throws -> String {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }
@@ -129,15 +107,15 @@ class NoteStorageService {
         
         let noteNSManagedObj = NSManagedObject(entity: entity, insertInto: managedContext)
         
-        let note = SaveNoteCoreDataModel(text: nil, title: nil)
+        let note = SaveNoteCoreDataModel(text: "", title: "")
         
         noteNSManagedObj.setValue(note.text, forKey: "text")
         noteNSManagedObj.setValue(note.title, forKey: "title")
         
         do {
             try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+        } catch {
+            throw NoteListErrors.runtimeError("could not save note")
         }
         return noteNSManagedObj.objectID.uriRepresentation().absoluteString
     }

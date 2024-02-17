@@ -38,7 +38,7 @@ class NoteSource {
     func createEmptyNote(onSuccess: @escaping (String) -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                let noteID = try self.noteStorageService.saveEmptyNote()
+                let noteID = try self.noteStorageService.createEmptyNote()
                 self.callResultOnMain {
                     onSuccess(noteID)
                 }
@@ -50,23 +50,28 @@ class NoteSource {
         }
     }
     
-    func getNoteById(id: String?, onSuccess: @escaping (FetchNoteCoreDataModel) -> (), onError: @escaping (Error) -> ()) {
+    func getNoteById(id: String, onSuccess: @escaping (FetchNoteCoreDataModel) -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                if let note = try self.noteStorageService.getNoteById(id: id) {
-                    self.callResultOnMain {
-                        onSuccess(note)
-                    }
+                let note = try self.noteStorageService.getNoteById(id: id)
+                self.callResultOnMain {
+                    onSuccess(note)
                 }
             } catch {
-                onError(error)
+                self.callResultOnMain {
+                    onError(error)
+                }
             }
         }
     }
     
     func updateNoteById(id: String, title: String?, text: String?) {
         DispatchQueue.global(qos: .utility).async {
-            self.noteStorageService.updateNoteById(id: id, text: text, title: title)
+            do {
+                try self.noteStorageService.updateNoteById(id: id, text: text, title: title)
+            } catch {
+                
+            }
         }
     }
     

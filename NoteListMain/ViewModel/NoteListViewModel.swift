@@ -33,17 +33,13 @@ class NoteListViewModel {
     
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
-            let notes = notes.map({ note in
-                if note.text.isEmpty && note.title.isEmpty {
-                    return NoteListNoteModel(text: "Empty note", title: "No title", id: note.id)
-                } else if note.title.isEmpty {
-                    return NoteListNoteModel(text: note.text, title: "No title", id: note.id)
-                } else if note.text.isEmpty {
-                    return NoteListNoteModel(text: "Empty note", title: note.title, id: note.id)
-                }
-                return NoteListNoteModel(text: note.text, title: note.title, id: note.id)
+            let mappedNotes = notes.map({ note in
+                let title = note.title.isEmpty ?  "No title" : note.title
+                let text = note.text.isEmpty ?  "No text" : note.text
+                return NoteListNoteModel(text: text, title: title, id: note.id)
+
             })
-            self.currentState = .success(notes)
+            self.currentState = .success(mappedNotes)
         }, onError: { _ in
             self.currentState = .error
         })
