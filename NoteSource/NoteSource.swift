@@ -75,12 +75,17 @@ class NoteSource {
         }
     }
     
-    func deleteNote(id: String) {
+    func deleteNote(id: String, onSuccess: @escaping () -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
             do {
                 try self.noteStorageService.deleteNote(id: id)
+                self.callResultOnMain {
+                    onSuccess()
+                }
             } catch {
-                //ignore
+                self.callResultOnMain {
+                    onError(error)
+                }
             }
         }
     }

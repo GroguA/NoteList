@@ -8,7 +8,7 @@
 import Foundation
 
 class NoteListViewModel {
-        
+    
     var viewStateDidChange: (NoteListState) -> () = { _ in } {
         didSet {
             guard let currentState = currentState else {
@@ -27,9 +27,10 @@ class NoteListViewModel {
             }
         }
     }
-        
+    
     private let noteSource = NoteSource.shared
-
+    
+    private var notes = [NoteListNoteModel]()
     
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
@@ -37,9 +38,10 @@ class NoteListViewModel {
                 let title = note.title.isEmpty ?  "No title" : note.title
                 let text = note.text.isEmpty ?  "No text" : note.text
                 return NoteListNoteModel(text: text, title: title, id: note.id)
-
+                
             })
             self.currentState = .success(mappedNotes)
+            self.notes = mappedNotes
         }, onError: { _ in
             self.currentState = .error
         })
@@ -52,7 +54,7 @@ class NoteListViewModel {
             self.onAction(NoteListAction.showErrorDialog(errorText: "Error creating new note" ))
         }))
     }
-        
+    
     
     func onNoteClicked(id: String) {
         if id != "9999" {
@@ -63,6 +65,16 @@ class NoteListViewModel {
     }
     
     func deleteNote(id: String) {
-        noteSource.deleteNote(id: id)
+        if id == "9999" {
+            self.notes.removeAll(where:  { $0.id == id })
+            self.currentState = .success(self.notes)
+        } else {
+            noteSource.deleteNote(id: id, onSuccess: {
+                self.notes.removeAll(where:  { $0.id == id })
+                self.currentState = .success(self.notes)
+            }, onError: { _ in
+                self.currentState = .error
+            })
+        }
     }
 }
