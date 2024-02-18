@@ -11,10 +11,12 @@ class FetchNoteCoreDataModel {
     let text: String
     let title: String
     let id: String
+    let attributedText: NSAttributedString?
     
-    init(text: String, title: String, id: String) {
+    init(text: String, title: String, id: String, attributedText: NSAttributedString?) {
         self.id = id
         self.text = text
         self.title = title
+        self.attributedText = attributedText
     }
 }

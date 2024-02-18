@@ -33,14 +33,14 @@ class EditNoteViewModel {
     func loadNote(id: String) {
         self.noteId = id
         noteSource.getNoteById(id: id, onSuccess: { note in
-            self.currentState = .success(text: note.text, title: note.title)
+            self.currentState = .success(text: note.text, title: note.title, attributedText: note.attributedText)
         }, onError: { _ in
             self.currentState = .error
         })
     }
     
-    func textChanged(title: String?, text: String?) {
-        noteSource.updateNoteById(id: noteId, title: title, text: text)
+    func textChanged(title: String?, text: String?, attributedText: NSAttributedString?) {
+        noteSource.updateNoteById(id: noteId, title: title, text: text, attributedText: attributedText)
     }
     
     

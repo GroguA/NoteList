@@ -18,9 +18,14 @@ class NoteSource {
             do {
                 let coreDataNotes = try self.noteStorageService.fetchNotes()
                 if coreDataNotes.isEmpty {
-                    let notes = FetchNoteCoreDataModel(text: "Let start with your first note", title: "Hello world", id: "9999")
-                    self.callResultOnMain {
-                        onSuccess([notes])
+                    do {
+                        let noteId = try self.noteStorageService.createNote(title: "Hello world", text: "Let start with your first note", attributedText: nil)
+                        let note = FetchNoteCoreDataModel(text: "Let start with your first note", title: "Hello world", id: noteId, attributedText: nil)
+                        self.callResultOnMain {
+                            onSuccess([note])
+                        }
+                    } catch {
+                        onError(error)
                     }
                 } else {
                     self.callResultOnMain {
@@ -38,7 +43,7 @@ class NoteSource {
     func createEmptyNote(onSuccess: @escaping (String) -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                let noteID = try self.noteStorageService.createEmptyNote()
+                let noteID = try self.noteStorageService.createNote(title: "", text: "", attributedText: nil)
                 self.callResultOnMain {
                     onSuccess(noteID)
                 }
@@ -65,27 +70,22 @@ class NoteSource {
         }
     }
     
-    func updateNoteById(id: String, title: String?, text: String?) {
+    func updateNoteById(id: String, title: String?, text: String?, attributedText: NSAttributedString?) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                try self.noteStorageService.updateNoteById(id: id, text: text, title: title)
+                try self.noteStorageService.updateNoteById(id: id, text: text, title: title, attributedText: attributedText)
             } catch {
                 //ignore
             }
         }
     }
     
-    func deleteNote(id: String, onSuccess: @escaping () -> (), onError: @escaping (Error) -> ()) {
+    func deleteNote(id: String) throws {
         DispatchQueue.global(qos: .utility).async {
             do {
                 try self.noteStorageService.deleteNote(id: id)
-                self.callResultOnMain {
-                    onSuccess()
-                }
             } catch {
-                self.callResultOnMain {
-                    onError(error)
-                }
+                
             }
         }
     }

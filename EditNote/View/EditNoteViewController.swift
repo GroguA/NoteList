@@ -26,7 +26,7 @@ class EditNoteViewController: UIViewController {
         textField.delegate = self
         return textField
     }()
-        
+    
     private lazy var noteTextTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.1).cgColor
@@ -66,7 +66,7 @@ class EditNoteViewController: UIViewController {
         label.isHidden = !noteTextTextView.text.isEmpty
         return label
     }()
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,7 +77,7 @@ class EditNoteViewController: UIViewController {
         viewModel.viewStateDidChange = { state in
             self.renderViewState(state: state)
         }
-
+        
     }
     
     private func setupViews() {
@@ -90,7 +90,7 @@ class EditNoteViewController: UIViewController {
         
         guard let noteID else { return }
         viewModel.loadNote(id: noteID)
-
+        
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
@@ -129,55 +129,68 @@ class EditNoteViewController: UIViewController {
     
     @objc private func adjustForKeyboard(notification: Notification) {
         guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-
+        
         let keyboardScreenEndFrame = keyboardValue.cgRectValue
         let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-
+        
         if notification.name == UIResponder.keyboardWillHideNotification {
             noteTextTextView.contentInset = .zero
         } else {
             noteTextTextView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
         }
-
+        
         noteTextTextView.scrollIndicatorInsets = noteTextTextView.contentInset
-
+        
         let selectedRange = noteTextTextView.selectedRange
         noteTextTextView.scrollRangeToVisible(selectedRange)
     }
     
     private func renderViewState(state: EditNoteState) {
         switch state {
-        case .success(let text, let title):
+        case .success(let text, let title, let attributedText):
             noteTextTextView.text = text
             noteTitleTextField.text = title
+            noteTextTextView.attributedText = attributedText
             errorLabel.isHidden = true
             placeholderLabel.isHidden = !noteTextTextView.text.isEmpty
         case .error:
             noteTextTextView.isHidden = true
             noteTitleTextField.isHidden = true
             errorLabel.isHidden = false
+            placeholderLabel.isHidden = true
             
         }
     }
     
-    @objc private func makeTextBold() {
-        if noteTextTextView.font != .systemFont(ofSize: 16, weight: .bold) {
-            noteTextTextView.font = .systemFont(ofSize: 16, weight: .bold)
-        } else {
-            noteTextTextView.font = .systemFont(ofSize: 16, weight: .regular)
-        }
+    @objc private func makeTextCursive() {
+        let range = noteTextTextView.selectedRange
+        let text = noteTextTextView.text
+        guard let text else { return }
+        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let italicFontAttribute = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 16.0)]
+        noteTextTextView.textStorage.addAttribute(NSAttributedString.Key.font, value: italicFontAttribute, range: range)
+        attributedString.addAttributes(italicFontAttribute, range: range)
+        noteTextTextView.attributedText = attributedString
     }
     
-    @objc private func makeTextCursive() {
-        if noteTextTextView.font != .italicSystemFont(ofSize: 16) {
-            noteTextTextView.font = .italicSystemFont(ofSize: 16)
-        } else {
-            noteTextTextView.font = .systemFont(ofSize: 16, weight: .regular)
-        }
+    @objc private func makeTextBold() {
+        let range = noteTextTextView.selectedRange
+        let text = noteTextTextView.text
+        guard let text else { return }
+        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let boldFontAttribute = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16.0)]
+        attributedString.addAttributes(boldFontAttribute, range: range)
+        noteTextTextView.attributedText = attributedString
     }
     
     @objc private func makeTextUnderline() {
-        
+        let range = noteTextTextView.selectedRange
+        let text = noteTextTextView.text
+        guard let text else { return }
+        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue]
+        attributedString.addAttributes(underlineAttribute, range: range)
+        noteTextTextView.attributedText = attributedString
     }
 }
 
@@ -185,7 +198,7 @@ extension EditNoteViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let currentString = textField.text as? NSString {
             let newString = currentString.replacingCharacters(in: range, with: string)
-            viewModel.textChanged(title: newString, text: nil)
+            viewModel.textChanged(title: newString, text: nil, attributedText: textField.attributedText)
         }
         return true
     }
@@ -195,7 +208,7 @@ extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if let currentString = textView.text as? NSString {
             let newString = currentString.replacingCharacters(in: range, with: text)
-            viewModel.textChanged(title: nil, text: newString)
+            viewModel.textChanged(title: nil, text: newString, attributedText: textView.attributedText)
         }
         return true
     }
@@ -209,5 +222,5 @@ extension EditNoteViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         placeholderLabel.isHidden = true
     }
-
+    
 }

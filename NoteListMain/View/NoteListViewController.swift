@@ -13,17 +13,12 @@ class NoteListViewController: UIViewController {
     
     private let viewModel = NoteListViewModel()
     
-    private let itemsPerRow: CGFloat = 1
-    private let itemsPerView: CGFloat = 7
-    private let sectionInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-    
     private lazy var configuration: UICollectionLayoutListConfiguration = {
-        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+        var config = UICollectionLayoutListConfiguration(appearance: .sidebarPlain)
         config.trailingSwipeActionsConfigurationProvider = { indexPath in
             let del = UIContextualAction(style: .destructive, title: "Delete") {
                 [weak self] action, view, completion in
-                guard let id = self?.notes[indexPath.item].id else { return }
-                self?.viewModel.deleteNote(id: id)
+                self?.viewModel.deleteNote(index: indexPath.item)
                 completion(true)
             }
             return UISwipeActionsConfiguration(actions: [del])
@@ -32,7 +27,6 @@ class NoteListViewController: UIViewController {
     }()
     
     private lazy var noteListCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
         let listLayout = UICollectionViewCompositionalLayout.list(using: configuration)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
         collectionView.dataSource = self
@@ -151,27 +145,3 @@ extension NoteListViewController: UICollectionViewDataSource {
     
 }
 
-extension NoteListViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let paddingWidht = sectionInsets.left * (itemsPerRow + 1)
-        let paddingHeight = sectionInsets.top * itemsPerView
-        let availableWidht = collectionView.bounds.width - paddingWidht
-        let itemWidht = availableWidht/itemsPerRow
-        let availibleHeight = collectionView.bounds.height - paddingHeight
-        let itemHeight = availibleHeight/itemsPerView
-        
-        return CGSize(width: itemWidht, height: itemHeight)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return sectionInsets
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return sectionInsets.top
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return sectionInsets.top
-    }
-}

@@ -34,12 +34,22 @@ class NoteListViewModel {
     
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
-            let mappedNotes = notes.map({ note in
+            var mappedNotes = notes.map({ note in
                 let title = note.title.isEmpty ?  "No title" : note.title
                 let text = note.text.isEmpty ?  "No text" : note.text
                 return NoteListNoteModel(text: text, title: title, id: note.id)
                 
             })
+            if mappedNotes.count > 1 && mappedNotes.contains(where: { $0.title == "Hello world"}) {
+                let defaultNote = mappedNotes.first(where: { $0.title == "Hello world"})
+                mappedNotes.removeAll(where: { $0.title == "Hello world" })
+                guard let defaultNote else { return }
+                do {
+                    try self.noteSource.deleteNote(id: defaultNote.id)
+                } catch {
+                    self.onAction(NoteListAction.showErrorDialog(errorText: "Could not delete note"))
+                }
+            }
             self.currentState = .success(mappedNotes)
             self.notes = mappedNotes
         }, onError: { _ in
@@ -57,24 +67,16 @@ class NoteListViewModel {
     
     
     func onNoteClicked(id: String) {
-        if id != "9999" {
             onAction(NoteListAction.openNoteEdit(noteId: id))
-        } else {
-            return
-        }
     }
     
-    func deleteNote(id: String) {
-        if id == "9999" {
-            self.notes.removeAll(where:  { $0.id == id })
-            self.currentState = .success(self.notes)
-        } else {
-            noteSource.deleteNote(id: id, onSuccess: {
-                self.notes.removeAll(where:  { $0.id == id })
-                self.currentState = .success(self.notes)
-            }, onError: { _ in
-                self.currentState = .error
-            })
+    func deleteNote(index: Int) {
+        do {
+            try noteSource.deleteNote(id: notes[index].id)
+            notes.remove(at: index)
+        } catch {
+            onAction(NoteListAction.showErrorDialog(errorText: "Could not delete note"))
         }
+        currentState = .success(self.notes)
     }
 }
