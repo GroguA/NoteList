@@ -13,6 +13,8 @@ class EditNoteViewController: UIViewController {
     
     private let viewModel = EditNoteViewModel()
     
+    private let textSize: CGFloat = 17
+    
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Fill title"
@@ -22,7 +24,7 @@ class EditNoteViewController: UIViewController {
         textField.autocapitalizationType = .sentences
         textField.autocorrectionType = .default
         textField.textAlignment = .justified
-        textField.font = .systemFont(ofSize: 17, weight: .medium)
+        textField.font = .systemFont(ofSize: 18, weight: .medium)
         textField.delegate = self
         return textField
     }()
@@ -33,7 +35,7 @@ class EditNoteViewController: UIViewController {
         textView.layer.borderWidth = 2
         textView.layer.cornerRadius = 8
         textView.layer.masksToBounds = true
-        textView.font = .systemFont(ofSize: 16, weight: .regular)
+        textView.font = .systemFont(ofSize: 17, weight: .regular)
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.autocapitalizationType = .sentences
         textView.autocorrectionType = .default
@@ -61,7 +63,7 @@ class EditNoteViewController: UIViewController {
     private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Fill note"
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .lightGray.withAlphaComponent(0.7)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = !noteTextTextView.text.isEmpty
@@ -162,26 +164,23 @@ class EditNoteViewController: UIViewController {
         }
     }
     
-    @objc private func makeTextCursive() {
+    private func changeTextFont(font: UIFont) {
         let range = noteTextTextView.selectedRange
         let text = noteTextTextView.attributedText
         guard let text else { return }
         let attrText = NSMutableAttributedString(attributedString: text)
-        let italicFontAttribute = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 16.0)]
+        let italicFontAttribute = [NSAttributedString.Key.font: font]
         attrText.addAttributes(italicFontAttribute, range: range)
         noteTextTextView.attributedText = attrText
         viewModel.textChanged(title: nil, attributedText: attrText)
     }
     
+    @objc private func makeTextCursive() {
+       changeTextFont(font: UIFont.italicSystemFont(ofSize: textSize))
+    }
+    
     @objc private func makeTextBold() {
-        let range = noteTextTextView.selectedRange
-        let text = noteTextTextView.attributedText
-        guard let text else { return }
-        let attrText = NSMutableAttributedString(attributedString: text)
-        let boldFontAttribute = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16.0)]
-        attrText.addAttributes(boldFontAttribute, range: range)
-        noteTextTextView.attributedText = attrText
-        viewModel.textChanged(title: nil, attributedText: attrText)
+       changeTextFont(font: UIFont.boldSystemFont(ofSize: textSize))
     }
     
     @objc private func makeTextUnderline() {
@@ -210,7 +209,7 @@ extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentAttributedText = NSMutableAttributedString(attributedString: textView.attributedText)
         currentAttributedText.replaceCharacters(in: range, with: text)
-        viewModel.textChanged(title: nil, attributedText: textView.attributedText)
+        viewModel.textChanged(title: nil, attributedText: currentAttributedText)
         return true
     }
     
