@@ -39,7 +39,7 @@ class EditNoteViewModel {
         })
     }
     
-    func textChanged(title: String?, attributedText: NSMutableAttributedString?) {
+    func textChanged(title: String?, attributedText: NSAttributedString?) {
         noteSource.updateNoteById(id: noteId, title: title, attributedText: attributedText)
     }
     

@@ -208,10 +208,9 @@ extension EditNoteViewController: UITextFieldDelegate {
 
 extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if let currentAttributedText = textView.attributedText as? NSMutableAttributedString {
-            currentAttributedText.replaceCharacters(in: range, with: text)
-            viewModel.textChanged(title: nil, attributedText: currentAttributedText)
-        }
+        let currentAttributedText = NSMutableAttributedString(attributedString: textView.attributedText)
+        currentAttributedText.replaceCharacters(in: range, with: text)
+        viewModel.textChanged(title: nil, attributedText: textView.attributedText)
         return true
     }
     

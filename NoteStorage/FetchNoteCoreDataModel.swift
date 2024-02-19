@@ -10,9 +10,9 @@ import Foundation
 class FetchNoteCoreDataModel {
     let title: String
     let id: String
-    let attributedText: NSMutableAttributedString
+    let attributedText: NSAttributedString
     
-    init( title: String, id: String, attributedText: NSMutableAttributedString) {
+    init( title: String, id: String, attributedText: NSAttributedString) {
         self.id = id
         self.title = title
         self.attributedText = attributedText

@@ -31,7 +31,7 @@ class NoteStorageService {
         let notesManagedObjects = try managedContext.fetch(fetchRequest)
         notesManagedObjects.forEach({ managedNote in
             guard let title = managedNote.value(forKey: "title") as? String,
-                  let attributedText = managedNote.value(forKey: "attributedText") as? NSMutableAttributedString
+                  let attributedText = managedNote.value(forKey: "attributedText") as? NSAttributedString
             else {
                 return
             }
@@ -56,7 +56,7 @@ class NoteStorageService {
         
         let noteManagedObj = managedContext.object(with: noteID)
         
-        guard let text = noteManagedObj.value(forKey: "attributedText") as? NSMutableAttributedString,
+        guard let text = noteManagedObj.value(forKey: "attributedText") as? NSAttributedString,
               let title = noteManagedObj.value(forKey: "title") as? String
         else {
             throw NoteListErrors.runtimeError("faild to fetch note text and title")
@@ -65,7 +65,7 @@ class NoteStorageService {
         return note
     }
     
-    func updateNoteById(id: String, title: String?, attributedText: NSMutableAttributedString?) throws {
+    func updateNoteById(id: String, title: String?, attributedText: NSAttributedString?) throws {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }
@@ -94,7 +94,7 @@ class NoteStorageService {
         
     }
     
-    func createNote(title: String, attributedText: NSMutableAttributedString?) throws -> String {
+    func createNote(title: String, attributedText: NSAttributedString?) throws -> String {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }

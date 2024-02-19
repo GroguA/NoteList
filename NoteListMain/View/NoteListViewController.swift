@@ -115,6 +115,7 @@ class NoteListViewController: UIViewController {
             self.notes = fetchedNotes
             noteListCollectionView.reloadData()
             errorLabel.isHidden = true
+            noteListCollectionView.isHidden = false
         case .error:
             noteListCollectionView.isHidden = true
             errorLabel.isHidden = false

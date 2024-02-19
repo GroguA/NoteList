@@ -8,6 +8,6 @@
 import Foundation
 
 enum EditNoteState {
-    case success(title: String?, attributedText: NSMutableAttributedString?)
+    case success(title: String?, attributedText: NSAttributedString?)
     case error
 }

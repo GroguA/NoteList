@@ -34,22 +34,15 @@ class NoteListViewModel {
     
     func loadNotes() {
         noteSource.getAllNotes(onSuccess: { notes in
-            var mappedNotes = notes.map({ note in
+            let mappedNotes = notes.map({ note in
                 let title = note.title.isEmpty ?  "No title" : note.title
                 let text = note.attributedText.string
                 let attrText = text.isEmpty ? "No text" : text
                 return NoteListNoteModel(text: attrText, title: title, id: note.id)
                 
             })
-            if mappedNotes.count > 1 && mappedNotes.contains(where: { $0.title == "Hello world"}) {
-                let defaultNote = mappedNotes.first(where: { $0.title == "Hello world"})
-                mappedNotes.removeAll(where: { $0.title == "Hello world" })
-                if let defaultNote {
-                    self.noteSource.deleteNote(id: defaultNote.id)
-                }
-            }
-            self.currentState = .success(mappedNotes)
             self.notes = mappedNotes
+            self.currentState = .success(mappedNotes)
         }, onError: { _ in
             self.currentState = .error
         })
