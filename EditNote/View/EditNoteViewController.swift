@@ -15,6 +15,8 @@ class EditNoteViewController: UIViewController {
     
     private let textSize: CGFloat = 17
     
+    private var currentEnabledFont: UIFont? = nil
+    
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Fill title"
@@ -165,12 +167,13 @@ class EditNoteViewController: UIViewController {
     }
     
     private func changeTextFont(font: UIFont) {
+        self.currentEnabledFont = font
         let range = noteTextTextView.selectedRange
         let text = noteTextTextView.attributedText
         guard let text else { return }
         let attrText = NSMutableAttributedString(attributedString: text)
-        let italicFontAttribute = [NSAttributedString.Key.font: font]
-        attrText.addAttributes(italicFontAttribute, range: range)
+        let fontAttribute = [NSAttributedString.Key.font: font]
+        attrText.addAttributes(fontAttribute, range: range)
         noteTextTextView.attributedText = attrText
         viewModel.textChanged(title: nil, attributedText: attrText)
     }
@@ -208,7 +211,12 @@ extension EditNoteViewController: UITextFieldDelegate {
 extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentAttributedText = NSMutableAttributedString(attributedString: textView.attributedText)
-        currentAttributedText.replaceCharacters(in: range, with: text)
+        let mutableAttributedText = NSMutableAttributedString(string: text)
+        if let currentEnabledFont {
+            let fontAttribute = [NSAttributedString.Key.font: currentEnabledFont.withSize(textSize)]
+            mutableAttributedText.addAttributes(fontAttribute, range: NSRange(text.startIndex..., in: text))
+        }
+        currentAttributedText.replaceCharacters(in: range, with: mutableAttributedText)
         viewModel.textChanged(title: nil, attributedText: currentAttributedText)
         return true
     }
