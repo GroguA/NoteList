@@ -36,18 +36,16 @@ class NoteListViewModel {
         noteSource.getAllNotes(onSuccess: { notes in
             var mappedNotes = notes.map({ note in
                 let title = note.title.isEmpty ?  "No title" : note.title
-                let text = note.text.isEmpty ?  "No text" : note.text
-                return NoteListNoteModel(text: text, title: title, id: note.id)
+                let text = note.attributedText.string
+                let attrText = text.isEmpty ? "No text" : text
+                return NoteListNoteModel(text: attrText, title: title, id: note.id)
                 
             })
             if mappedNotes.count > 1 && mappedNotes.contains(where: { $0.title == "Hello world"}) {
                 let defaultNote = mappedNotes.first(where: { $0.title == "Hello world"})
                 mappedNotes.removeAll(where: { $0.title == "Hello world" })
-                guard let defaultNote else { return }
-                do {
-                    try self.noteSource.deleteNote(id: defaultNote.id)
-                } catch {
-                    self.onAction(NoteListAction.showErrorDialog(errorText: "Could not delete note"))
+                if let defaultNote {
+                    self.noteSource.deleteNote(id: defaultNote.id)
                 }
             }
             self.currentState = .success(mappedNotes)
@@ -67,16 +65,12 @@ class NoteListViewModel {
     
     
     func onNoteClicked(id: String) {
-            onAction(NoteListAction.openNoteEdit(noteId: id))
+        onAction(NoteListAction.openNoteEdit(noteId: id))
     }
     
     func deleteNote(index: Int) {
-        do {
-            try noteSource.deleteNote(id: notes[index].id)
-            notes.remove(at: index)
-        } catch {
-            onAction(NoteListAction.showErrorDialog(errorText: "Could not delete note"))
-        }
+        noteSource.deleteNote(id: notes[index].id)
+        notes.remove(at: index)
         currentState = .success(self.notes)
     }
 }

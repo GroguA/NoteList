@@ -8,12 +8,10 @@
 import Foundation
 
 class SaveNoteCoreDataModel {
-    let text: String?
     let title: String?
-    let attributedText: NSAttributedString?
+    let attributedText: NSMutableAttributedString?
     
-    init(text: String?, title: String?, attributedText: NSAttributedString?) {
-        self.text = text
+    init(title: String?, attributedText: NSMutableAttributedString?) {
         self.title = title
         self.attributedText = attributedText
     }

@@ -19,13 +19,15 @@ class NoteSource {
                 let coreDataNotes = try self.noteStorageService.fetchNotes()
                 if coreDataNotes.isEmpty {
                     do {
-                        let noteId = try self.noteStorageService.createNote(title: "Hello world", text: "Let start with your first note", attributedText: nil)
-                        let note = FetchNoteCoreDataModel(text: "Let start with your first note", title: "Hello world", id: noteId, attributedText: nil)
+                        let noteId = try self.noteStorageService.createNote(title: "Hello world", attributedText: NSMutableAttributedString(string: "Let start with your first note"))
+                        let note = FetchNoteCoreDataModel(title: "Hello world", id: noteId, attributedText: NSMutableAttributedString(string: "Let start with your first note"))
                         self.callResultOnMain {
                             onSuccess([note])
                         }
                     } catch {
-                        onError(error)
+                        self.callResultOnMain {
+                            onError(error)
+                        }
                     }
                 } else {
                     self.callResultOnMain {
@@ -43,7 +45,7 @@ class NoteSource {
     func createEmptyNote(onSuccess: @escaping (String) -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                let noteID = try self.noteStorageService.createNote(title: "", text: "", attributedText: nil)
+                let noteID = try self.noteStorageService.createNote(title: "", attributedText: NSMutableAttributedString(string: ""))
                 self.callResultOnMain {
                     onSuccess(noteID)
                 }
@@ -70,24 +72,23 @@ class NoteSource {
         }
     }
     
-    func updateNoteById(id: String, title: String?, text: String?, attributedText: NSAttributedString?) {
+    func updateNoteById(id: String, title: String?, attributedText: NSMutableAttributedString?) {
         DispatchQueue.global(qos: .utility).async {
             do {
-                try self.noteStorageService.updateNoteById(id: id, text: text, title: title, attributedText: attributedText)
+                try self.noteStorageService.updateNoteById(id: id, title: title, attributedText: attributedText)
             } catch {
                 //ignore
             }
         }
     }
     
-    func deleteNote(id: String) throws {
-        DispatchQueue.global(qos: .utility).async {
-            do {
-                try self.noteStorageService.deleteNote(id: id)
-            } catch {
-                
-            }
+    func deleteNote(id: String) {
+        do {
+            try self.noteStorageService.deleteNote(id: id)
+        } catch {
+            //ignore
         }
+        
     }
     
     private func callResultOnMain(result: @escaping () -> Void) {

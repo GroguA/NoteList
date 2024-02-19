@@ -13,22 +13,26 @@ class NoteListViewController: UIViewController {
     
     private let viewModel = NoteListViewModel()
     
-    private lazy var configuration: UICollectionLayoutListConfiguration = {
-        var config = UICollectionLayoutListConfiguration(appearance: .sidebarPlain)
-        config.trailingSwipeActionsConfigurationProvider = { indexPath in
-            let del = UIContextualAction(style: .destructive, title: "Delete") {
-                [weak self] action, view, completion in
-                self?.viewModel.deleteNote(index: indexPath.item)
-                completion(true)
-            }
-            return UISwipeActionsConfiguration(actions: [del])
+    private lazy var layout: UICollectionViewCompositionalLayout = {
+       let layout = UICollectionViewCompositionalLayout() { section, layoutEnvironment in
+           var config = UICollectionLayoutListConfiguration(appearance: .sidebarPlain)
+           config.trailingSwipeActionsConfigurationProvider = { indexPath in
+               let del = UIContextualAction(style: .destructive, title: "Delete") {
+                   [weak self] action, view, completion in
+                   self?.viewModel.deleteNote(index: indexPath.item)
+                   completion(true)
+               }
+               return UISwipeActionsConfiguration(actions: [del])
+           }
+            let layoutSection =  NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
+            layoutSection.interGroupSpacing = 10
+            return layoutSection
         }
-        return config
+        return layout
     }()
     
     private lazy var noteListCollectionView: UICollectionView = {
-        let listLayout = UICollectionViewCompositionalLayout.list(using: configuration)
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false

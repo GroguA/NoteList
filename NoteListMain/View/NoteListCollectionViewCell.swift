@@ -53,7 +53,7 @@ class NoteListCollectionViewCell: UICollectionViewCell {
         ]
         
         NSLayoutConstraint.activate(constraints)
-        
+
     }
     
     func fillCell(note: NoteListNoteModel) {

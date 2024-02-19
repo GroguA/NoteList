@@ -54,6 +54,7 @@ class EditNoteViewController: UIViewController {
     private let toolBar: UIToolbar = {
         let bar = UIToolbar()
         bar.sizeToFit()
+        bar.translatesAutoresizingMaskIntoConstraints = false
         return bar
     }()
     
@@ -119,7 +120,7 @@ class EditNoteViewController: UIViewController {
     
     private func setupToolBar() {
         let positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
-        positiveSeparator.width = view.bounds.width/4
+        positiveSeparator.width = view.bounds.width/3 + 16
         let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(makeTextBold))
         let cursiveText = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(makeTextCursive))
         let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(makeTextUnderline))
@@ -147,8 +148,7 @@ class EditNoteViewController: UIViewController {
     
     private func renderViewState(state: EditNoteState) {
         switch state {
-        case .success(let text, let title, let attributedText):
-            noteTextTextView.text = text
+        case .success(let title, let attributedText):
             noteTitleTextField.text = title
             noteTextTextView.attributedText = attributedText
             errorLabel.isHidden = true
@@ -164,33 +164,35 @@ class EditNoteViewController: UIViewController {
     
     @objc private func makeTextCursive() {
         let range = noteTextTextView.selectedRange
-        let text = noteTextTextView.text
+        let text = noteTextTextView.attributedText
         guard let text else { return }
-        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let attrText = NSMutableAttributedString(attributedString: text)
         let italicFontAttribute = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 16.0)]
-        noteTextTextView.textStorage.addAttribute(NSAttributedString.Key.font, value: italicFontAttribute, range: range)
-        attributedString.addAttributes(italicFontAttribute, range: range)
-        noteTextTextView.attributedText = attributedString
+        attrText.addAttributes(italicFontAttribute, range: range)
+        noteTextTextView.attributedText = attrText
+        viewModel.textChanged(title: nil, attributedText: attrText)
     }
     
     @objc private func makeTextBold() {
         let range = noteTextTextView.selectedRange
-        let text = noteTextTextView.text
+        let text = noteTextTextView.attributedText
         guard let text else { return }
-        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let attrText = NSMutableAttributedString(attributedString: text)
         let boldFontAttribute = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16.0)]
-        attributedString.addAttributes(boldFontAttribute, range: range)
-        noteTextTextView.attributedText = attributedString
+        attrText.addAttributes(boldFontAttribute, range: range)
+        noteTextTextView.attributedText = attrText
+        viewModel.textChanged(title: nil, attributedText: attrText)
     }
     
     @objc private func makeTextUnderline() {
         let range = noteTextTextView.selectedRange
-        let text = noteTextTextView.text
+        let text = noteTextTextView.attributedText
         guard let text else { return }
-        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16.0)])
+        let attrText = NSMutableAttributedString(attributedString: text)
         let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue]
-        attributedString.addAttributes(underlineAttribute, range: range)
-        noteTextTextView.attributedText = attributedString
+        attrText.addAttributes(underlineAttribute, range: range)
+        noteTextTextView.attributedText = attrText
+        viewModel.textChanged(title: nil, attributedText: attrText)
     }
 }
 
@@ -198,7 +200,7 @@ extension EditNoteViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let currentString = textField.text as? NSString {
             let newString = currentString.replacingCharacters(in: range, with: string)
-            viewModel.textChanged(title: newString, text: nil, attributedText: textField.attributedText)
+            viewModel.textChanged(title: newString, attributedText: nil)
         }
         return true
     }
@@ -206,9 +208,9 @@ extension EditNoteViewController: UITextFieldDelegate {
 
 extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if let currentString = textView.text as? NSString {
-            let newString = currentString.replacingCharacters(in: range, with: text)
-            viewModel.textChanged(title: nil, text: newString, attributedText: textView.attributedText)
+        if let currentAttributedText = textView.attributedText as? NSMutableAttributedString {
+            currentAttributedText.replaceCharacters(in: range, with: text)
+            viewModel.textChanged(title: nil, attributedText: currentAttributedText)
         }
         return true
     }

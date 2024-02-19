@@ -30,13 +30,12 @@ class NoteStorageService {
         
         let notesManagedObjects = try managedContext.fetch(fetchRequest)
         notesManagedObjects.forEach({ managedNote in
-            guard let text = managedNote.value(forKey: "text") as? String,
-                  let title = managedNote.value(forKey: "title") as? String,
-                  let attributedText = managedNote.value(forKey: "attributedText") as? NSAttributedString
+            guard let title = managedNote.value(forKey: "title") as? String,
+                  let attributedText = managedNote.value(forKey: "attributedText") as? NSMutableAttributedString
             else {
                 return
             }
-            let note = FetchNoteCoreDataModel(text: text, title: title, id: managedNote.objectID.uriRepresentation().absoluteString, attributedText: attributedText)
+            let note = FetchNoteCoreDataModel(title: title, id: managedNote.objectID.uriRepresentation().absoluteString, attributedText: attributedText)
             notes.append(note)
         })
         return notes
@@ -57,17 +56,16 @@ class NoteStorageService {
         
         let noteManagedObj = managedContext.object(with: noteID)
         
-        guard let text = noteManagedObj.value(forKey: "text") as? String,
-              let title = noteManagedObj.value(forKey: "title") as? String,
-              let attributedText = noteManagedObj.value(forKey: "attributedText") as? NSAttributedString
+        guard let text = noteManagedObj.value(forKey: "attributedText") as? NSMutableAttributedString,
+              let title = noteManagedObj.value(forKey: "title") as? String
         else {
             throw NoteListErrors.runtimeError("faild to fetch note text and title")
         }
-        note = FetchNoteCoreDataModel(text: text, title: title, id: noteManagedObj.objectID.uriRepresentation().absoluteString, attributedText: attributedText)
+        note = FetchNoteCoreDataModel(title: title, id: noteManagedObj.objectID.uriRepresentation().absoluteString, attributedText: text)
         return note
     }
     
-    func updateNoteById(id: String, text: String?, title: String?, attributedText: NSAttributedString?) throws {
+    func updateNoteById(id: String, title: String?, attributedText: NSMutableAttributedString?) throws {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }
@@ -81,14 +79,12 @@ class NoteStorageService {
         
         let noteManagedObj = managedContext.object(with: noteID)
         
-        if let text {
-            noteManagedObj.setValue(text, forKey: "text")
-        }
         if let title {
             noteManagedObj.setValue(title, forKey: "title")
         }
-        
-        noteManagedObj.setValue(attributedText, forKey: "attributedText")
+        if let attributedText {
+            noteManagedObj.setValue(attributedText, forKey: "attributedText")
+        }
         
         do {
             try managedContext.save()
@@ -98,7 +94,7 @@ class NoteStorageService {
         
     }
     
-    func createNote(title: String, text: String, attributedText: NSAttributedString?) throws -> String {
+    func createNote(title: String, attributedText: NSMutableAttributedString?) throws -> String {
         guard let appDelegate = appDelegate else {
             throw NoteListErrors.runtimeError("no app delegate")
         }
@@ -111,9 +107,8 @@ class NoteStorageService {
         
         let noteNSManagedObj = NSManagedObject(entity: entity, insertInto: managedContext)
         
-        let note = SaveNoteCoreDataModel(text: text, title: title, attributedText: attributedText)
+        let note = SaveNoteCoreDataModel(title: title, attributedText: attributedText)
         
-        noteNSManagedObj.setValue(note.text, forKey: "text")
         noteNSManagedObj.setValue(note.title, forKey: "title")
         noteNSManagedObj.setValue(note.attributedText, forKey: "attributedText")
         
