@@ -14,16 +14,16 @@ class NoteListViewController: UIViewController {
     private let viewModel = NoteListViewModel()
     
     private lazy var layout: UICollectionViewCompositionalLayout = {
-       let layout = UICollectionViewCompositionalLayout() { section, layoutEnvironment in
-           var config = UICollectionLayoutListConfiguration(appearance: .sidebarPlain)
-           config.trailingSwipeActionsConfigurationProvider = { indexPath in
-               let del = UIContextualAction(style: .destructive, title: "Delete") {
-                   [weak self] action, view, completion in
-                   self?.viewModel.deleteNote(index: indexPath.item)
-                   completion(true)
-               }
-               return UISwipeActionsConfiguration(actions: [del])
-           }
+        let layout = UICollectionViewCompositionalLayout() { section, layoutEnvironment in
+            var config = UICollectionLayoutListConfiguration(appearance: .sidebarPlain)
+            config.trailingSwipeActionsConfigurationProvider = { indexPath in
+                let del = UIContextualAction(style: .destructive, title: "Delete") {
+                    [weak self] action, view, completion in
+                    self?.viewModel.deleteNote(index: indexPath.item)
+                    completion(true)
+                }
+                return UISwipeActionsConfiguration(actions: [del])
+            }
             let layoutSection =  NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
             layoutSection.interGroupSpacing = 10
             return layoutSection
@@ -49,6 +49,15 @@ class NoteListViewController: UIViewController {
     private lazy var errorLabel: UILabel = {
         let label = UILabel()
         label.text = "Error loading notes"
+        label.font = .systemFont(ofSize: 18)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
+    }()
+    
+    private lazy var emptyNoteStorageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No notes added yet"
         label.font = .systemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = true
@@ -92,6 +101,7 @@ class NoteListViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(noteListCollectionView)
         view.addSubview(errorLabel)
+        view.addSubview(emptyNoteStorageLabel)
         navigationItem.title = "My notes"
         navigationItem.rightBarButtonItem = addNoteButton
         
@@ -102,7 +112,10 @@ class NoteListViewController: UIViewController {
             noteListCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            emptyNoteStorageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyNoteStorageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
             
         ]
         
@@ -115,10 +128,16 @@ class NoteListViewController: UIViewController {
             self.notes = fetchedNotes
             noteListCollectionView.reloadData()
             errorLabel.isHidden = true
+            emptyNoteStorageLabel.isHidden = true
             noteListCollectionView.isHidden = false
         case .error:
             noteListCollectionView.isHidden = true
             errorLabel.isHidden = false
+            emptyNoteStorageLabel.isHidden = true
+        case .empty:
+            noteListCollectionView.isHidden = true
+            emptyNoteStorageLabel.isHidden = false
+            errorLabel.isHidden = true
         }
     }
     

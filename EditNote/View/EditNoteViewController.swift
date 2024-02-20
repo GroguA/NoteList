@@ -303,7 +303,7 @@ extension EditNoteViewController: UITextViewDelegate {
     
 }
 
-public func ==(lhs: [NSAttributedString.Key : Any]?, rhs: [NSAttributedString.Key : Any]? ) -> Bool {
+private func ==(lhs: [NSAttributedString.Key : Any]?, rhs: [NSAttributedString.Key : Any]? ) -> Bool {
     guard let lhs = lhs, let rhs = rhs else {
         return false
     }

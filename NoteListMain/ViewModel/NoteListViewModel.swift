@@ -39,7 +39,6 @@ class NoteListViewModel {
                 let text = note.attributedText.string
                 let attrText = text.isEmpty ? "No text" : text
                 return NoteListNoteModel(text: attrText, title: title, id: note.id)
-                
             })
             self.notes = mappedNotes
             self.currentState = .success(mappedNotes)
@@ -64,6 +63,10 @@ class NoteListViewModel {
     func deleteNote(index: Int) {
         noteSource.deleteNote(id: notes[index].id)
         notes.remove(at: index)
-        currentState = .success(self.notes)
+        if notes.isEmpty {
+            currentState = .empty
+        } else {
+            currentState = .success(self.notes)
+        }
     }
 }

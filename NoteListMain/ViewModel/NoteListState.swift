@@ -10,4 +10,5 @@ import Foundation
 enum NoteListState {
     case success([NoteListNoteModel])
     case error
+    case empty
 }
