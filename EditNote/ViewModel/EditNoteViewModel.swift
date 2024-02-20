@@ -41,6 +41,7 @@ class EditNoteViewModel {
     
     func textChanged(title: String?, attributedText: NSAttributedString?) {
         noteSource.updateNoteById(id: noteId, title: title, attributedText: attributedText)
+        currentState = .success(title: title, attributedText: attributedText)
     }
     
     

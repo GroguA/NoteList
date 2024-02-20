@@ -100,4 +100,10 @@ class NoteSource {
             result()
         }
     }
+    
+    private func getDefaultNote(id: String)  {
+
+    }
+
+
 }

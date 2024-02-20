@@ -16,7 +16,7 @@ class EditNoteViewController: UIViewController {
     private let textSize: CGFloat = 17
     
     private var currentEnabledFont: UIFont? = nil
-    
+        
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Fill title"
@@ -167,15 +167,24 @@ class EditNoteViewController: UIViewController {
     }
     
     private func changeTextFont(font: UIFont) {
-        self.currentEnabledFont = font
         let range = noteTextTextView.selectedRange
         let text = noteTextTextView.attributedText
         guard let text else { return }
-        let attrText = NSMutableAttributedString(attributedString: text)
-        let fontAttribute = [NSAttributedString.Key.font: font]
-        attrText.addAttributes(fontAttribute, range: range)
-        noteTextTextView.attributedText = attrText
-        viewModel.textChanged(title: nil, attributedText: attrText)
+        if range.description.isEmpty {
+            self.currentEnabledFont = font
+            return
+        } else {
+            if currentEnabledFont == font {
+                currentEnabledFont = nil
+            } else {
+                currentEnabledFont = font
+            }
+            let attrText = NSMutableAttributedString(attributedString: text)
+            let fontAttribute = [NSAttributedString.Key.font: font]
+            attrText.addAttributes(fontAttribute, range: range)
+            noteTextTextView.attributedText = attrText
+            viewModel.textChanged(title: noteTitleTextField.text, attributedText: attrText)
+        }
     }
     
     @objc private func makeTextCursive() {
@@ -218,7 +227,7 @@ extension EditNoteViewController: UITextViewDelegate {
         }
         currentAttributedText.replaceCharacters(in: range, with: mutableAttributedText)
         viewModel.textChanged(title: nil, attributedText: currentAttributedText)
-        return true
+        return false
     }
     
     func textViewDidChange(_ textView: UITextView) {
