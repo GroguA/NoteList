@@ -36,9 +36,28 @@ While fill your note you can change text style.
 
 There are 4 styles for your note text:
 
-1. Default style
+1. Default style*
 2. Bold style
 3. Italic style
 4. Underline style
+
+*Сan only be selected for part of the text 
+
+You can choose this styles and all subsequent text will have applied style:
+
+1. Bold style
+2. Italic style
+3. Underline style
+
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/allBoldText.png?raw=true" height="400" />
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/boldThere.png?raw=true" height="400" />
+
+Also you can change style selected text part:
+
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/selectText.png?raw=true" height="400" />
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/underlineSelected.png?raw=true" height="400" />
+
+
+
 
 
