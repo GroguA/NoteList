@@ -16,7 +16,7 @@ This main screen you can see when use app for first time. First note are default
 
 Notes could be deleted by swipe.
 
-
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/deleteNote.png?raw=true" height="400" />
 
 If you clicked on note from main screen you can change note fields. It saved automatically.
 
@@ -32,7 +32,7 @@ When adding a note to the app you must fill following fields:
 
 While fill your note you can change text style.
 
-
+<img src="https://github.com/GroguA/NoteList/blob/main/Screenshots/editNote.png?raw=true" height="400" />
 
 There are 4 styles for your note text:
 
