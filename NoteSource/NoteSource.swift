@@ -13,9 +13,7 @@ class NoteSource {
     
     private let noteStorageService = NoteStorageService.shared
     
-    private let defaultTitle = "Hello world"
-    
-    private var defaultText = "Let start with your first note"
+    private let defaultNoteProvider = DefaultNoteProvider()
     
     func getAllNotes(onSuccess: @escaping ([FetchNoteCoreDataModel]) -> (), onError: @escaping (Error) -> ()) {
         DispatchQueue.global(qos: .utility).async {
@@ -23,10 +21,12 @@ class NoteSource {
                 let coreDataNotes = try self.noteStorageService.fetchNotes()
                 if coreDataNotes.isEmpty {
                     do {
-                        let noteId = try self.noteStorageService.createNote(title: self.defaultTitle, attributedText: NSMutableAttributedString(string: self.defaultText))
-                        let note = FetchNoteCoreDataModel(title: self.defaultTitle, id: noteId, attributedText: NSMutableAttributedString(string: self.defaultText))
+                        let defaultText = self.defaultNoteProvider.provideDefaultNoteText()
+                        let defaultTitle = self.defaultNoteProvider.provideDefaultNoteTitle()
+                        let noteId = try self.noteStorageService.createNote(title: defaultTitle, attributedText: defaultText)
+                        let defaultNote = self.defaultNoteProvider.provideDefaultNote(noteId: noteId)
                         self.callResultOnMain {
-                            onSuccess([note])
+                            onSuccess([defaultNote])
                         }
                     } catch {
                         self.callResultOnMain {
@@ -100,10 +100,5 @@ class NoteSource {
             result()
         }
     }
-    
-    private func getDefaultNote(id: String)  {
-
-    }
-
 
 }

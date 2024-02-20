@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7C8A9DDC2B84441800C9361D /* Readme.md in Resources */ = {isa = PBXBuildFile; fileRef = 7C8A9DDB2B84441800C9361D /* Readme.md */; };
+		7C8A9DDE2B84BF4B00C9361D /* DefaultNoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8A9DDD2B84BF4B00C9361D /* DefaultNoteProvider.swift */; };
 		7CED2A612B7CB89500EDF509 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A602B7CB89500EDF509 /* AppDelegate.swift */; };
 		7CED2A632B7CB89500EDF509 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A622B7CB89500EDF509 /* SceneDelegate.swift */; };
 		7CED2A652B7CB89500EDF509 /* NoteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CED2A642B7CB89500EDF509 /* NoteListViewController.swift */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		7C8A9DDB2B84441800C9361D /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		7C8A9DDD2B84BF4B00C9361D /* DefaultNoteProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNoteProvider.swift; sourceTree = "<group>"; };
 		7CED2A5D2B7CB89500EDF509 /* NoteList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CED2A602B7CB89500EDF509 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CED2A622B7CB89500EDF509 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				7CED2A7A2B7D7F9200EDF509 /* NoteSource.swift */,
+				7C8A9DDD2B84BF4B00C9361D /* DefaultNoteProvider.swift */,
 			);
 			path = NoteSource;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				7CED2A652B7CB89500EDF509 /* NoteListViewController.swift in Sources */,
 				7CED2A612B7CB89500EDF509 /* AppDelegate.swift in Sources */,
 				7CED2A962B7DEA9100EDF509 /* NoteListState.swift in Sources */,
+				7C8A9DDE2B84BF4B00C9361D /* DefaultNoteProvider.swift in Sources */,
 				7CED2A832B7D93CA00EDF509 /* EditNoteViewController.swift in Sources */,
 				7CED2A942B7DE59E00EDF509 /* NoteListErrors.swift in Sources */,
 				7CED2A8F2B7DB38100EDF509 /* EditNoteViewModel.swift in Sources */,

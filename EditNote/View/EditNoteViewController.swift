@@ -14,8 +14,6 @@ class EditNoteViewController: UIViewController {
     private let viewModel = EditNoteViewModel()
     
     private let textSize: CGFloat = 17
-    
-    private var currentEnabledFont: UIFont? = nil
         
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
@@ -23,8 +21,8 @@ class EditNoteViewController: UIViewController {
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.clearButtonMode = .whileEditing
-        textField.autocapitalizationType = .sentences
-        textField.autocorrectionType = .default
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         textField.textAlignment = .justified
         textField.font = .systemFont(ofSize: 18, weight: .medium)
         textField.delegate = self
@@ -39,8 +37,8 @@ class EditNoteViewController: UIViewController {
         textView.layer.masksToBounds = true
         textView.font = .systemFont(ofSize: 17, weight: .regular)
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.autocapitalizationType = .sentences
-        textView.autocorrectionType = .default
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
         textView.textAlignment = .justified
         textView.delegate = self
         return textView
@@ -72,10 +70,45 @@ class EditNoteViewController: UIViewController {
         return label
     }()
     
+    private lazy var boldText: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "bold"),
+            style: .plain,
+            target: self,
+            action: #selector(makeTextBold)
+        )
+    }()
+    
+    private lazy var cursiveText: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "italic"),
+            style: .plain,
+            target: self,
+            action: #selector(makeTextCursive)
+        )
+    }()
+    
+    private lazy var underlineText: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "underline"),
+            style: .plain,
+            target: self,
+            action: #selector(makeTextUnderline)
+        )
+    }()
+    
+    private var currentEnabledAttribute: [NSAttributedString.Key : Any]? = nil
+
+    private let boldAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)]
+    private let cursiveAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 16)]
+    
+    private let underlineAttribute: [NSAttributedString.Key: Any] = [
+        .font: UIFont.systemFont(ofSize: 17),
+        .underlineStyle: NSUnderlineStyle.thick.rawValue
+    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
         setupToolBar()
         
@@ -125,9 +158,6 @@ class EditNoteViewController: UIViewController {
     private func setupToolBar() {
         let positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
         positiveSeparator.width = view.bounds.width/3 + 16
-        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(makeTextBold))
-        let cursiveText = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(makeTextCursive))
-        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(makeTextUnderline))
         toolBar.items = [boldText, positiveSeparator, cursiveText, positiveSeparator, underlineText]
         
     }
@@ -154,7 +184,9 @@ class EditNoteViewController: UIViewController {
         switch state {
         case .success(let title, let attributedText):
             noteTitleTextField.text = title
+            noteTextTextView.delegate = nil
             noteTextTextView.attributedText = attributedText
+            noteTextTextView.delegate = self
             errorLabel.isHidden = true
             placeholderLabel.isHidden = !noteTextTextView.text.isEmpty
         case .error:
@@ -165,45 +197,56 @@ class EditNoteViewController: UIViewController {
             
         }
     }
-    
-    private func changeTextFont(font: UIFont) {
-        let range = noteTextTextView.selectedRange
-        let text = noteTextTextView.attributedText
-        guard let text else { return }
-        if range.description.isEmpty {
-            self.currentEnabledFont = font
-            return
-        } else {
-            if currentEnabledFont == font {
-                currentEnabledFont = nil
-            } else {
-                currentEnabledFont = font
-            }
-            let attrText = NSMutableAttributedString(attributedString: text)
-            let fontAttribute = [NSAttributedString.Key.font: font]
-            attrText.addAttributes(fontAttribute, range: range)
-            noteTextTextView.attributedText = attrText
-            viewModel.textChanged(title: noteTitleTextField.text, attributedText: attrText)
-        }
-    }
-    
+
     @objc private func makeTextCursive() {
-       changeTextFont(font: UIFont.italicSystemFont(ofSize: textSize))
+        processAttributeClicked(clickedAttribute: cursiveAttribute)
     }
     
     @objc private func makeTextBold() {
-       changeTextFont(font: UIFont.boldSystemFont(ofSize: textSize))
+        processAttributeClicked(clickedAttribute: boldAttribute)
     }
     
     @objc private func makeTextUnderline() {
+        processAttributeClicked(clickedAttribute: underlineAttribute)
+    }
+    
+    private func processAttributeClicked(clickedAttribute: [NSAttributedString.Key : Any]) {
+        if noteTextTextView.selectedRange.length == 0 {
+            toggleStyleButtons(clickedAttribute: clickedAttribute)
+        } else {
+            changeSelectedRangeTextAttribute(attribute: clickedAttribute)
+        }
+    }
+    
+    
+    private func toggleStyleButtons(clickedAttribute: [NSAttributedString.Key : Any]) {
+        if currentEnabledAttribute == clickedAttribute {
+            self.currentEnabledAttribute = nil
+        } else {
+            self.currentEnabledAttribute = clickedAttribute
+        }
+        
+        boldText.isSelected = false
+        underlineText.isSelected = false
+        cursiveText.isSelected = false
+
+        if currentEnabledAttribute == boldAttribute {
+            boldText.isSelected = true
+        } else if currentEnabledAttribute == underlineAttribute {
+            underlineText.isSelected = true
+        } else if currentEnabledAttribute == cursiveAttribute {
+            cursiveText.isSelected = true
+        }
+        
+    }
+    
+    private func changeSelectedRangeTextAttribute(attribute: [NSAttributedString.Key : Any]) {
         let range = noteTextTextView.selectedRange
         let text = noteTextTextView.attributedText
         guard let text else { return }
         let attrText = NSMutableAttributedString(attributedString: text)
-        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue]
-        attrText.addAttributes(underlineAttribute, range: range)
-        noteTextTextView.attributedText = attrText
-        viewModel.textChanged(title: nil, attributedText: attrText)
+        attrText.setAttributes(attribute, range: range)
+        viewModel.textChanged(title: noteTitleTextField.text, attributedText: attrText)
     }
 }
 
@@ -211,9 +254,9 @@ extension EditNoteViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if let currentString = textField.text as? NSString {
             let newString = currentString.replacingCharacters(in: range, with: string)
-            viewModel.textChanged(title: newString, attributedText: nil)
+            viewModel.textChanged(title: newString, attributedText: noteTextTextView.attributedText)
         }
-        return true
+        return false
     }
 }
 
@@ -221,12 +264,13 @@ extension EditNoteViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentAttributedText = NSMutableAttributedString(attributedString: textView.attributedText)
         let mutableAttributedText = NSMutableAttributedString(string: text)
-        if let currentEnabledFont {
-            let fontAttribute = [NSAttributedString.Key.font: currentEnabledFont.withSize(textSize)]
-            mutableAttributedText.addAttributes(fontAttribute, range: NSRange(text.startIndex..., in: text))
+        if let currentEnabledAttribute {
+            mutableAttributedText.setAttributes(currentEnabledAttribute, range: NSRange(text.startIndex..., in: text))
+        } else {
+            mutableAttributedText.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont (ofSize: textSize), range: NSRange(text.startIndex..., in: text))
         }
         currentAttributedText.replaceCharacters(in: range, with: mutableAttributedText)
-        viewModel.textChanged(title: nil, attributedText: currentAttributedText)
+        viewModel.textChanged(title: noteTitleTextField.text, attributedText: currentAttributedText)
         return false
     }
     
@@ -240,4 +284,13 @@ extension EditNoteViewController: UITextViewDelegate {
         placeholderLabel.isHidden = true
     }
     
+    
+    
+}
+
+public func ==(lhs: [NSAttributedString.Key : Any]?, rhs: [NSAttributedString.Key : Any]? ) -> Bool {
+    guard let lhs = lhs, let rhs = rhs else {
+        return false
+    }
+    return NSDictionary(dictionary: lhs).isEqual(to: rhs)
 }

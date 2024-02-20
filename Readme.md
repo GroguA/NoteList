@@ -12,8 +12,6 @@ This app use:
 
 This main screen you can see when use app for first time. First note are default and will be in the app until delete it.
 
-<img src="https://github.com/GroguA/dogsShelter/blob/main/Screenshots/mainView.png?raw=true" height="400" />
-
 To create your note you have to click on the plus icon at the top right of the main screen.
 
 When adding a dog to the app you must fill following fields:
@@ -24,10 +22,6 @@ When adding a dog to the app you must fill following fields:
 
 While fill your note you can change text style in note text field.
 
-<img src="https://github.com/GroguA/dogsShelter/blob/main/Screenshots/fillDogView.png?raw=true" height="400" />
-
 If you clicked on note from main screen you can change note fields. It saved automatically.
 
-<img src="https://github.com/GroguA/dogsShelter/blob/main/Screenshots/details.png?raw=true" height="400" />
-<img src="https://github.com/GroguA/dogsShelter/blob/main/Screenshots/changeDog.png?raw=true" height="400" />
 
