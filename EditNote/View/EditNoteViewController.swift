@@ -14,7 +14,7 @@ class EditNoteViewController: UIViewController {
     private let viewModel = EditNoteViewModel()
     
     private let textSize: CGFloat = 17
-        
+    
     private lazy var noteTitleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Fill title"
@@ -70,7 +70,7 @@ class EditNoteViewController: UIViewController {
         return label
     }()
     
-    private lazy var boldText: UIBarButtonItem = {
+    private lazy var boldStyleButton: UIBarButtonItem = {
         return UIBarButtonItem(
             image: UIImage(systemName: "bold"),
             style: .plain,
@@ -79,7 +79,7 @@ class EditNoteViewController: UIViewController {
         )
     }()
     
-    private lazy var cursiveText: UIBarButtonItem = {
+    private lazy var cursiveStyleButton: UIBarButtonItem = {
         return UIBarButtonItem(
             image: UIImage(systemName: "italic"),
             style: .plain,
@@ -88,7 +88,7 @@ class EditNoteViewController: UIViewController {
         )
     }()
     
-    private lazy var underlineText: UIBarButtonItem = {
+    private lazy var underlineStyleButton: UIBarButtonItem = {
         return UIBarButtonItem(
             image: UIImage(systemName: "underline"),
             style: .plain,
@@ -97,15 +97,26 @@ class EditNoteViewController: UIViewController {
         )
     }()
     
+    private lazy var defaultStyleButton: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "character"),
+            style: .plain,
+            target: self,
+            action: #selector(makeSelectedTextDefault)
+        )
+    }()
+    
     private var currentEnabledAttribute: [NSAttributedString.Key : Any]? = nil
-
-    private let boldAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)]
-    private let cursiveAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 16)]
+    
+    private let boldAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)]
+    private let cursiveAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: 17)]
     
     private let underlineAttribute: [NSAttributedString.Key: Any] = [
         .font: UIFont.systemFont(ofSize: 17),
         .underlineStyle: NSUnderlineStyle.thick.rawValue
     ]
+    
+    private let defaultAttribute: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17)]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -157,8 +168,8 @@ class EditNoteViewController: UIViewController {
     
     private func setupToolBar() {
         let positiveSeparator = UIBarButtonItem(barButtonSystemItem:.fixedSpace, target: nil, action: nil)
-        positiveSeparator.width = view.bounds.width/3 + 16
-        toolBar.items = [boldText, positiveSeparator, cursiveText, positiveSeparator, underlineText]
+        positiveSeparator.width = view.bounds.width/4 - 16
+        toolBar.items = [defaultStyleButton, positiveSeparator, boldStyleButton, positiveSeparator, cursiveStyleButton, positiveSeparator, underlineStyleButton]
         
     }
     
@@ -197,7 +208,7 @@ class EditNoteViewController: UIViewController {
             
         }
     }
-
+    
     @objc private func makeTextCursive() {
         processAttributeClicked(clickedAttribute: cursiveAttribute)
     }
@@ -208,6 +219,10 @@ class EditNoteViewController: UIViewController {
     
     @objc private func makeTextUnderline() {
         processAttributeClicked(clickedAttribute: underlineAttribute)
+    }
+    
+    @objc private func makeSelectedTextDefault() {
+        changeSelectedRangeTextAttribute(attribute: defaultAttribute)
     }
     
     private func processAttributeClicked(clickedAttribute: [NSAttributedString.Key : Any]) {
@@ -226,16 +241,16 @@ class EditNoteViewController: UIViewController {
             self.currentEnabledAttribute = clickedAttribute
         }
         
-        boldText.isSelected = false
-        underlineText.isSelected = false
-        cursiveText.isSelected = false
-
+        boldStyleButton.isSelected = false
+        underlineStyleButton.isSelected = false
+        cursiveStyleButton.isSelected = false
+        
         if currentEnabledAttribute == boldAttribute {
-            boldText.isSelected = true
+            boldStyleButton.isSelected = true
         } else if currentEnabledAttribute == underlineAttribute {
-            underlineText.isSelected = true
+            underlineStyleButton.isSelected = true
         } else if currentEnabledAttribute == cursiveAttribute {
-            cursiveText.isSelected = true
+            cursiveStyleButton.isSelected = true
         }
         
     }
